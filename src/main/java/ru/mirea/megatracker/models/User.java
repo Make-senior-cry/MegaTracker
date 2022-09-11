@@ -1,10 +1,34 @@
 package ru.mirea.megatracker.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
-//@Entity
-//@Table(name = "User")
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
+@Entity
+@Table(name = "_User")
+@Getter
+@Setter
 public class User {
-    // TODO
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
+
+    @Column(name = "email")
+    @Email(message = "Email should be valid!")
+    private String email;
+
+    @Column(name = "password")
+    @Size(min = 4, message = "Password must contain more than 4 characters!")
+    @NotEmpty(message = "Password cannot be empty!")
+    private String password;
+
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
+    public User() {}
 }

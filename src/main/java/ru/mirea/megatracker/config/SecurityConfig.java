@@ -33,13 +33,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().loginPage("/auth/sign-in")
                 .loginProcessingUrl("/process-sign-in")
                 .defaultSuccessUrl("/", true)
-                .failureUrl("/auth/sign-in?error");
+                .failureUrl("/auth/sign-in?error")
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/auth/sign-in");
     }
 
     // Authentication setup
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider((AuthenticationProvider) userDetailsService);
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(getPasswordEncoder());
     }
 
     @Bean
