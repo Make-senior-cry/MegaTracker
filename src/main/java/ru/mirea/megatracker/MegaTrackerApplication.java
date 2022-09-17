@@ -9,5 +9,4 @@ public class MegaTrackerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MegaTrackerApplication.class, args);
 	}
-
 }

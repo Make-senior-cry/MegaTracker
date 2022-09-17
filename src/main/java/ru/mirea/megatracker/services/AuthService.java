@@ -6,7 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.repositories.UsersRepository;
-import ru.mirea.megatracker.util.UnconfirmedPasswordException;
+
+import java.util.Optional;
 
 
 @Service
@@ -22,8 +23,16 @@ public class AuthService {
     }
 
     @Transactional
-    public void signUpNewUser(User user) {
+    public void register(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         usersRepository.save(user);
+    }
+
+    public boolean checkForEmailExistence(String email) {
+        return usersRepository.existsByEmail(email);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return usersRepository.findByEmail(email);
     }
 }

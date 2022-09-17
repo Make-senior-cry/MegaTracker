@@ -7,9 +7,9 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 @Entity
-@Table(name = "_User")
-@Getter
+@Table(name = "users")
 @Setter
+@Getter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +17,8 @@ public class User {
     private int id;
 
     @Column(name = "email")
-    @Email(message = "Email should be valid!")
+    @Email(message = "Email is invalid!")
+    @NotEmpty(message = "Email cannot be empty!")
     private String email;
 
     @Column(name = "password")

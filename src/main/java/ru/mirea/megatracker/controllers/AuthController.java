@@ -3,61 +3,101 @@ package ru.mirea.megatracker.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import ru.mirea.megatracker.dto.UserDTO;
+import ru.mirea.megatracker.dto.SignInUserDTO;
+import ru.mirea.megatracker.dto.SignUpUserDTO;
 import ru.mirea.megatracker.models.User;
+import ru.mirea.megatracker.security.UserDetailsImpl;
+import ru.mirea.megatracker.security.jwt.JwtUtil;
 import ru.mirea.megatracker.services.AuthService;
 import ru.mirea.megatracker.util.UnconfirmedPasswordException;
 import ru.mirea.megatracker.util.UserErrorResponse;
+import ru.mirea.megatracker.util.UserNotAuthenticatedException;
 import ru.mirea.megatracker.util.UserNotCreatedException;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
     private final AuthService authService;
+
     @Autowired
-    public AuthController(AuthService authService) {
+    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, AuthService authService) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
         this.authService = authService;
     }
 
+
     @PostMapping("/sign-up")
-    public ResponseEntity<HttpStatus> createNewUser(@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> signUp(@Valid @RequestBody SignUpUserDTO signUpUserDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             StringBuilder errorMessage = new StringBuilder();
 
             List<FieldError> errors = bindingResult.getFieldErrors();
             for (FieldError error : errors) {
-                errorMessage.append(error.getField())
-                        .append(" - ").append(error.getDefaultMessage()).append(";");
+                errorMessage.append(error.getDefaultMessage()).append("\n");
             }
 
             throw new UserNotCreatedException(errorMessage.toString());
         }
 
-        authService.signUpNewUser(convertToUser(userDTO));
-        return ResponseEntity.ok(HttpStatus.OK);
+        if (authService.checkForEmailExistence(signUpUserDTO.getEmail())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new UserErrorResponse("Email is already in use!"));
+        }
+
+        confirmPassword(signUpUserDTO.getPassword(), signUpUserDTO.getRepeatedPassword());
+
+        User user = signUpUserDTO.toUser();
+        authService.register(user);
+
+        return ResponseEntity.ok(new UserErrorResponse("User registered successfully!"));
     }
 
-    private User convertToUser(UserDTO userDTO) {
+    @PostMapping("/sign-in")
+    public ResponseEntity<?> signIn(@RequestBody @Valid SignInUserDTO signInUserDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            StringBuilder errorMessage = new StringBuilder();
 
-        confirmPassword(userDTO.getPassword(), userDTO.getRepeatedPassword());
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            for (FieldError error : errors) {
+                errorMessage.append(error.getDefaultMessage()).append("\n");
+            }
 
-        User user = new User();
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(userDTO.getPassword());
+            throw new UserNotAuthenticatedException(errorMessage.toString());
+        }
 
-        return user;
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(signInUserDTO.getEmail(), signInUserDTO.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtil.generateJwtToken(authentication);
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        Map<Object, Object> response = new HashMap<>();
+        response.put("token", jwt);
+        response.put("email", userDetails.getUsername());
+        return ResponseEntity.ok(response);
     }
 
     private void confirmPassword(String password, String repeatedPassword) {
         if (!password.equals(repeatedPassword)) {
-            throw new UnconfirmedPasswordException("Password not confirmed!");
+            throw new UnconfirmedPasswordException("Password does not match!");
         }
     }
 
@@ -70,6 +110,13 @@ public class AuthController {
 
     @ExceptionHandler
     private ResponseEntity<UserErrorResponse> handleException(UnconfirmedPasswordException exception) {
+        UserErrorResponse response = new UserErrorResponse(exception.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<UserErrorResponse> handleException(UserNotAuthenticatedException exception) {
         UserErrorResponse response = new UserErrorResponse(exception.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
