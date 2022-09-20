@@ -30,6 +30,7 @@ public class SignUpUserDTO {
 
     }
 
+
     public SignUpUserDTO(String email, String password, String repeatedPassword) {
         this.email = email;
         this.password = password;
