@@ -37,9 +37,8 @@ public class CoinConroller {
     }
 
     @GetMapping("/{ticker}")
-    public ResponseEntity<?> getCoinByTicker(@PathVariable String ticker,
-                                             BindingResult bindingResult){
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> getCoinByTicker(@PathVariable String ticker){
+        return new ResponseEntity<Double>(coinService.getPrice(), HttpStatus.OK);
     }
 
 

@@ -23,4 +23,5 @@ public class ApiResponse{
 
     @JsonProperty(value = "Message")
     private String message;
+
 }

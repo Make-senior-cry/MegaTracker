@@ -28,13 +28,7 @@ public class CoinService {
         return list.getData();
     }
 
-    public Coin getPrice(){
-        Coin pr = webClient.get().
-                uri("/data/price?fsym=BTC&tsyms=USD")
-                .header("Apikey {cb0b9f6468d47f38977dc89ec588774b38b9715028f2c91ef2969dfd70391cab}")
-                .retrieve().bodyToMono(Coin.class).block();
-        return pr;
-    }
+
 
 
 }
