@@ -20,4 +20,6 @@ public class CoinInfo {
     @JsonProperty(value = "FullName")
     private String fullName;
 
+    @JsonProperty(value = "ImageUrl")
+    private String imageUrl;
 }
