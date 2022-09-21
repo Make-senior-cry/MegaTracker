@@ -16,8 +16,8 @@ import lombok.Setter;
 public class CoinPriceData {
 
     @JsonProperty(value = "USD")
-    private ;
+    private PriceInfoUSD priceInfoUSD;
 
     @JsonProperty(value = "RUB")
-    private ;
+    private PriceInfoRUB priceInfoRUB;
 }
