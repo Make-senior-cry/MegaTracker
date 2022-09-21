@@ -3,7 +3,6 @@ package ru.mirea.megatracker.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.mirea.megatracker.dto.Coin;
 import ru.mirea.megatracker.services.CoinService;
@@ -33,23 +32,23 @@ public class CoinConroller {
     @GetMapping("")
     public ResponseEntity<?> getCoins(@RequestParam(value = "f", required = false) String filters){
         ///List<Coin> ls = coinService.getTopList(null, 0, 10);
-        return new ResponseEntity<List<Coin>>(coinService.getTopList(null, 0, 10), HttpStatus.OK);
+        return new ResponseEntity<List<Coin>>(coinService.getTopList(null, 10), HttpStatus.OK);
     }
 
     @GetMapping("/{ticker}")
     public ResponseEntity<?> getCoinByTicker(@PathVariable String ticker){
-        return new ResponseEntity<Double>(coinService.getPrice(), HttpStatus.OK);
+        //return new ResponseEntity<Double>(coinService.getPrice(), HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
 
     @GetMapping("/{ticker}/history")
-    public ResponseEntity<?> getHistoryByTicker(@PathVariable String ticker,
-                                                BindingResult bindingResult){
+    public ResponseEntity<?> getHistoryByTicker(@PathVariable String ticker){
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/favorite")
-    public ResponseEntity<?> getFavorite(BindingResult bindingResult){
+    public ResponseEntity<?> getFavorite(){
         return ResponseEntity.ok().build();
     }
 
