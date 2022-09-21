@@ -1,21 +1,11 @@
 package ru.mirea.megatracker.services;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import ru.mirea.megatracker.API.ApiResponse;
-import ru.mirea.megatracker.models.Coin;
+import ru.mirea.megatracker.dto.Coin;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

@@ -1,22 +1,18 @@
 package ru.mirea.megatracker.controllers;
 
-import liquibase.pro.packaged.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
-import ru.mirea.megatracker.models.Coin;
+import ru.mirea.megatracker.dto.Coin;
 import ru.mirea.megatracker.services.CoinService;
 import ru.mirea.megatracker.util.CoinErrorResponse;
 import ru.mirea.megatracker.util.TickerNotFoundException;
 import ru.mirea.megatracker.util.UserErrorResponse;
 import ru.mirea.megatracker.util.UserNotAuthenticatedException;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 //TODO
 

@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.mirea.megatracker.models.Coin;
+import ru.mirea.megatracker.dto.Coin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +17,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiResponse{
+
     @JsonProperty(value = "Data")
     private List<Coin> data = new ArrayList<Coin>();
+
+    @JsonProperty(value = "Message")
+    private String message;
 }
