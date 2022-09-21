@@ -1,4 +1,5 @@
 package ru.mirea.megatracker.API;
 
-public class PriceInfoRUB {
+public class PriceInfoRUB extends PriceInfo {
+
 }
