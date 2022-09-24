@@ -1,12 +1,17 @@
 package ru.mirea.megatracker.services;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.mirea.megatracker.api.ApiResponse;
 import ru.mirea.megatracker.api.Coin;
+import ru.mirea.megatracker.api.CoinInfo;
+import ru.mirea.megatracker.api.CoinPriceData;
+import ru.mirea.megatracker.dto.CoinInfoDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,13 +26,34 @@ public class CoinService {
         this.webClient = webClient;
     }
 
-    public List<Coin> getTopList(List<?> filters, int pageSize){
-        ApiResponse list = webClient.get().
+    public List<CoinInfoDTO> getTopList(List<?> filters, int pageSize){
+        ApiResponse apiResponse = webClient.get().
                 uri(String.format("/data/top/totalvolfull?limit=%d&tsym=USD", pageSize)).
                 header("Apikey {" + apiKey + "}").
                 retrieve().bodyToMono(ApiResponse.class).block();
-        return list.getData();
+
+        List<CoinInfoDTO> response = new ArrayList<>();
+
+        if (apiResponse.getMessage().equals("Success")) {
+            List<Coin> coins = apiResponse.getData();
+            CoinInfoDTO coinInfoDTO = new CoinInfoDTO();
+            CoinPriceData coinPriceData;
+            CoinInfo coinInfo;
+
+            for (Coin coin : coins) {
+                coinPriceData = coin.getCoinPriceData();
+                coinInfo = coin.getCoinInfo();
+
+                coinPriceData.getPriceInfoUSD().convertToDTO(coinInfoDTO);
+                coinInfo.convertToDTO(coinInfoDTO);
+
+                response.add(coinInfoDTO);
+            }
+        }
+
+        return response;
     }
+
 
 
 
