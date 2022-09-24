@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.mirea.megatracker.dto.CoinInfoDTO;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
@@ -32,5 +33,12 @@ public abstract class PriceInfo {
     @JsonProperty(value = "LOWDAY")
     private double lowDay;
 
-
+    public void convertToDTO(CoinInfoDTO coinInfoDTO) {
+        coinInfoDTO.setPrice(price);
+        coinInfoDTO.setChangeDay(changeDay);
+        coinInfoDTO.setChangeDayPct(changeDayPct);
+        coinInfoDTO.setMarketCap(marketCap);
+        coinInfoDTO.setHighDay(highDay);
+        coinInfoDTO.setLowDay(lowDay);
+    }
 }
