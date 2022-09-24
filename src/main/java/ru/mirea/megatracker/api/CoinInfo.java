@@ -17,6 +17,9 @@ public class CoinInfo {
     @JsonProperty(value = "FullName")
     private String name;
 
+    @JsonProperty(value = "Name")
+    private String ticker;
+
     @JsonProperty(value = "ImageUrl")
     private String imageUrl;
 }
