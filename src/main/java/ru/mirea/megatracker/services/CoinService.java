@@ -4,15 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import ru.mirea.megatracker.API.ApiResponse;
-import ru.mirea.megatracker.API.Coin;
+import ru.mirea.megatracker.api.ApiResponse;
+import ru.mirea.megatracker.api.Coin;
 
 import java.util.List;
 
 @Service
 public class CoinService {
-    //TODO
-
     private final WebClient webClient;
 
     @Value("${api.key}")

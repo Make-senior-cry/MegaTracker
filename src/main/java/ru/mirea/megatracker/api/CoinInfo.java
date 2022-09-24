@@ -1,4 +1,4 @@
-package ru.mirea.megatracker.API;
+package ru.mirea.megatracker.api;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

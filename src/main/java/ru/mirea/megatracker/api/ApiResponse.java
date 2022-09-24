@@ -1,4 +1,4 @@
-package ru.mirea.megatracker.API;
+package ru.mirea.megatracker.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,7 +18,7 @@ import java.util.List;
 public class ApiResponse{
 
     @JsonProperty(value = "Data")
-    private List<Coin> data = new ArrayList<Coin>();
+    private List<Coin> data = new ArrayList<>();
 
     @JsonProperty(value = "Message")
     private String message;
