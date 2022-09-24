@@ -1,6 +1,5 @@
 package ru.mirea.megatracker.services;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -10,6 +9,7 @@ import ru.mirea.megatracker.api.Coin;
 import ru.mirea.megatracker.api.CoinInfo;
 import ru.mirea.megatracker.api.CoinPriceData;
 import ru.mirea.megatracker.dto.CoinInfoDTO;
+import ru.mirea.megatracker.util.CoinErrorResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class CoinService {
         this.webClient = webClient;
     }
 
-    public List<CoinInfoDTO> getTopList(List<?> filters, int pageSize){
+    public List<CoinInfoDTO> getTopList(List<?> filters, int pageSize) throws CoinErrorResponse {
         ApiResponse apiResponse = webClient.get().
                 uri(String.format("top/totalvolfull?limit=%d&tsym=USD", pageSize)).
                 header("Apikey {" + apiKey + "}").
@@ -34,7 +34,7 @@ public class CoinService {
 
         List<CoinInfoDTO> response = new ArrayList<>(pageSize);
 
-        if (apiResponse.getMessage().equals("Success")) {
+        if (apiResponse != null && apiResponse.getMessage().equals("Success")) {
             List<Coin> coins = apiResponse.getData();
             CoinPriceData coinPriceData;
             CoinInfo coinInfo;
@@ -49,9 +49,11 @@ public class CoinService {
 
                 response.add(coinInfoDTO);
             }
+            return response;
         }
-
-        return response;
+        else {
+            throw new CoinErrorResponse("External API error");
+        }
     }
 
 
