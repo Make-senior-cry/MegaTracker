@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.mirea.megatracker.api.Coin;
+import ru.mirea.megatracker.dto.CoinInfoDTO;
 import ru.mirea.megatracker.services.CoinService;
 import ru.mirea.megatracker.util.CoinErrorResponse;
 import ru.mirea.megatracker.util.TickerNotFoundException;
@@ -32,7 +33,7 @@ public class CoinConroller {
     @GetMapping("")
     public ResponseEntity<?> getCoins(@RequestParam(value = "f", required = false) String filters){
         ///List<Coin> ls = coinService.getTopList(null, 0, 10);
-        return new ResponseEntity<List<Coin>>(coinService.getTopList(null, 10), HttpStatus.OK);
+        return new ResponseEntity<List<CoinInfoDTO>>(coinService.getTopList(null, 10), HttpStatus.OK);
     }
 
     @GetMapping("/{ticker}")
