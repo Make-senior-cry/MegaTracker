@@ -32,15 +32,15 @@ public class CoinService {
                 header("Apikey {" + apiKey + "}").
                 retrieve().bodyToMono(ApiResponse.class).block();
 
-        List<CoinInfoDTO> response = new ArrayList<>();
+        List<CoinInfoDTO> response = new ArrayList<>(pageSize);
 
         if (apiResponse.getMessage().equals("Success")) {
             List<Coin> coins = apiResponse.getData();
-            CoinInfoDTO coinInfoDTO = new CoinInfoDTO();
             CoinPriceData coinPriceData;
             CoinInfo coinInfo;
 
             for (Coin coin : coins) {
+                CoinInfoDTO coinInfoDTO = new CoinInfoDTO();
                 coinPriceData = coin.getCoinPriceData();
                 coinInfo = coin.getCoinInfo();
 
