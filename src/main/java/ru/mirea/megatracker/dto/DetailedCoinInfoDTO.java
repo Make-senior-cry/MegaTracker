@@ -7,14 +7,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class CoinInfoDTO {
+public class DetailedCoinInfoDTO {
     private String name;
     private String ticker;
     private String imageUrl;
     private double price;
-    private double changeDay;
-    private double changeDayPct;
-    private long marketCap;
-    private double highDay;
-    private double lowDay;
+    private boolean isFavorite;
+    private String note;
+    private long timeFrom;
+    private long timeTo;
+    private List<CoinPriceHistoryDTO>;
+
 }

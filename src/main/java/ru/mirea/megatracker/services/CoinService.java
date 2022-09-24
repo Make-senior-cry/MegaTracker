@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.mirea.megatracker.API.ApiResponse;
-import ru.mirea.megatracker.dto.Coin;
+import ru.mirea.megatracker.API.Coin;
 
 import java.util.List;
 
