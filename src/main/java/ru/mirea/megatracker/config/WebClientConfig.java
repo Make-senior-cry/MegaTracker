@@ -10,7 +10,7 @@ public class WebClientConfig {
     @Bean
     public WebClient webClient(){
         return WebClient.builder().
-                baseUrl("https://min-api.cryptocompare.com/").
+                baseUrl("https://min-api.cryptocompare.com/data/").
                 build();
     }
 

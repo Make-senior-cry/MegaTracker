@@ -18,7 +18,7 @@ public abstract class PriceInfo {
     @JsonProperty(value = "PRICE")
     private double price;
 
-    @JsonProperty(value = "CHANGE24HOURS")
+    @JsonProperty(value = "CHANGE24HOUR")
     private double changeDay;
 
     @JsonProperty(value = "CHANGEPCT24HOUR")

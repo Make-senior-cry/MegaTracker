@@ -28,7 +28,7 @@ public class CoinService {
 
     public List<CoinInfoDTO> getTopList(List<?> filters, int pageSize){
         ApiResponse apiResponse = webClient.get().
-                uri(String.format("/data/top/totalvolfull?limit=%d&tsym=USD", pageSize)).
+                uri(String.format("top/totalvolfull?limit=%d&tsym=USD", pageSize)).
                 header("Apikey {" + apiKey + "}").
                 retrieve().bodyToMono(ApiResponse.class).block();
 
