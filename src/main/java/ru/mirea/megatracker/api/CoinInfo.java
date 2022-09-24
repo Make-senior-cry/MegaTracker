@@ -14,11 +14,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CoinInfo {
-    @JsonProperty(value = "Name")
-    private String name;
-
     @JsonProperty(value = "FullName")
-    private String fullName;
+    private String name;
 
     @JsonProperty(value = "ImageUrl")
     private String imageUrl;
