@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.mirea.megatracker.dto.CoinInfoDTO;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
@@ -22,4 +23,10 @@ public class CoinInfo {
 
     @JsonProperty(value = "ImageUrl")
     private String imageUrl;
+
+    public void convertToDTO(CoinInfoDTO coinInfoDTO) {
+        coinInfoDTO.setName(name);
+        coinInfoDTO.setTicker(ticker);
+        coinInfoDTO.setImageUrl(imageUrl);
+    }
 }
