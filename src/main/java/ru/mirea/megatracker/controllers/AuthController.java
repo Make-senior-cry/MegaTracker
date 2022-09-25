@@ -13,6 +13,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.mirea.megatracker.dto.SignInUserDTO;
 import ru.mirea.megatracker.dto.SignUpUserDTO;
+import ru.mirea.megatracker.models.RefreshToken;
 import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.payload.JwtResponse;
 import ru.mirea.megatracker.payload.TokenRefreshRequest;
