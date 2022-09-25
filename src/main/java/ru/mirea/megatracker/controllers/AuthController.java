@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.mirea.megatracker.dto.SignInUserDTO;
 import ru.mirea.megatracker.dto.SignUpUserDTO;
 import ru.mirea.megatracker.models.User;
+import ru.mirea.megatracker.payload.JwtResponse;
 import ru.mirea.megatracker.security.UserDetailsImpl;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
 import ru.mirea.megatracker.services.AuthService;
@@ -33,12 +34,15 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final AuthService authService;
+    private final RefreshTokenService refreshTokenService;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, AuthService authService) {
+    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, AuthService authService,
+                          RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.authService = authService;
+        this.refreshTokenService = refreshTokenService;
     }
 
 
@@ -86,13 +90,12 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(signInUserDTO.getEmail(), signInUserDTO.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtil.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        String accessToken = jwtUtil.generateJwtToken(userDetails);
 
-        Map<Object, Object> response = new HashMap<>();
-        response.put("token", jwt);
-        response.put("email", userDetails.getUsername());
-        return ResponseEntity.ok(response);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
+        return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken, userDetails.getEmail()));
     }
 
     private void confirmPassword(String password, String repeatedPassword) {
