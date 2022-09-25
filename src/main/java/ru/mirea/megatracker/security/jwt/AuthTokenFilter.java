@@ -16,13 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
-    private JwtUtil jwtUtil;
-    private UserDetailsServiceImpl userDetailsService;
     @Autowired
-    public AuthTokenFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
-    }
+    private JwtUtil jwtUtil;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
 
     public AuthTokenFilter() {
 
