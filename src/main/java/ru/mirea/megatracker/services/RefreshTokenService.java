@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.mirea.megatracker.models.RefreshToken;
 import ru.mirea.megatracker.repositories.RefreshTokensRepository;
 import ru.mirea.megatracker.repositories.UsersRepository;
+import ru.mirea.megatracker.util.TokenRefreshException;
 
 import java.time.Instant;
 import java.util.Optional;
