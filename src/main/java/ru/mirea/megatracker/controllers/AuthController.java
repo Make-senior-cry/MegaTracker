@@ -138,4 +138,11 @@ public class AuthController {
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    private ResponseEntity<UserErrorResponse> handleException(TokenRefreshException exception) {
+        UserErrorResponse response = new UserErrorResponse(exception.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
 }
