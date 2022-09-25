@@ -1,5 +1,6 @@
 package ru.mirea.megatracker.controllers;
 
+import liquibase.pro.packaged.V;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,8 @@ import ru.mirea.megatracker.dto.SignInUserDTO;
 import ru.mirea.megatracker.dto.SignUpUserDTO;
 import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.payload.JwtResponse;
+import ru.mirea.megatracker.payload.TokenRefreshRequest;
+import ru.mirea.megatracker.payload.TokenRefreshResponse;
 import ru.mirea.megatracker.security.UserDetailsImpl;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
 import ru.mirea.megatracker.services.AuthService;
@@ -97,6 +100,21 @@ public class AuthController {
 
         return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken, userDetails.getEmail()));
     }
+
+    @PostMapping("/refreshtoken")
+    public ResponseEntity<?> refreshToken(@RequestBody @Valid TokenRefreshRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String accessToken = jwtUtil.generateTokenFromUsername(user.getUsername());
+                    return ResponseEntity.ok(new TokenRefreshResponse(accessToken, requestRefreshToken));
+                })
+                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
+    }
+
 
     private void confirmPassword(String password, String repeatedPassword) {
         if (!password.equals(repeatedPassword)) {
