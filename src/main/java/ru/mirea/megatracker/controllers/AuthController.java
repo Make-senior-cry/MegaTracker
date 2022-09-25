@@ -1,6 +1,5 @@
 package ru.mirea.megatracker.controllers;
 
-import liquibase.pro.packaged.V;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,15 +20,11 @@ import ru.mirea.megatracker.payload.TokenRefreshResponse;
 import ru.mirea.megatracker.security.UserDetailsImpl;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
 import ru.mirea.megatracker.services.AuthService;
-import ru.mirea.megatracker.util.UnconfirmedPasswordException;
-import ru.mirea.megatracker.util.UserErrorResponse;
-import ru.mirea.megatracker.util.UserNotAuthenticatedException;
-import ru.mirea.megatracker.util.UserNotCreatedException;
+import ru.mirea.megatracker.services.RefreshTokenService;
+import ru.mirea.megatracker.util.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -99,7 +94,7 @@ public class AuthController {
 
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
 
-        return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken, userDetails.getEmail()));
+        return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken.getToken(), userDetails.getEmail()));
     }
 
     @PostMapping("/refreshtoken")
@@ -110,7 +105,7 @@ public class AuthController {
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
-                    String accessToken = jwtUtil.generateTokenFromUsername(user.getUsername());
+                    String accessToken = jwtUtil.generateTokenFromUsername(user.getEmail());
                     return ResponseEntity.ok(new TokenRefreshResponse(accessToken, requestRefreshToken));
                 })
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
