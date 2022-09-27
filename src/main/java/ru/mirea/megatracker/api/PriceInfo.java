@@ -9,6 +9,7 @@ import lombok.Setter;
 import ru.mirea.megatracker.dto.CoinInfoDTO;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -19,29 +20,31 @@ import java.text.DecimalFormat;
 public abstract class PriceInfo {
 
     @JsonProperty(value = "PRICE")
-    private double currentPrice;
+    private BigDecimal currentPrice;
 
     @JsonProperty(value = "CHANGE24HOUR")
-    private double deltaPrice;
+    private BigDecimal deltaPrice;
 
     @JsonProperty(value = "CHANGEPCT24HOUR")
-    private double deltaPricePercent;
+    private BigDecimal deltaPricePercent;
 
     @JsonProperty(value = "MKTCAP")
     private long marketCap;
 
     @JsonProperty(value = "HIGHDAY")
-    private double highDay;
+    private BigDecimal highDay;
 
     @JsonProperty(value = "LOWDAY")
-    private double lowDay;
+    private BigDecimal lowDay;
 
     public void convertToDTO(CoinInfoDTO coinInfoDTO) {
-        coinInfoDTO.setCurrentPrice(currentPrice);
-        coinInfoDTO.setDeltaPrice(Math.round(deltaPrice * 100.0) / 100.0);
-        coinInfoDTO.setDeltaPricePercent(Math.round(deltaPricePercent * 100.0) / 100.0);
+        coinInfoDTO.setCurrentPrice(currentPrice.floatValue());
+        coinInfoDTO.setDeltaPrice(deltaPrice.setScale(Math.max(highDay.scale(), lowDay.scale()),
+                RoundingMode.HALF_UP).stripTrailingZeros().floatValue());
+        coinInfoDTO.setDeltaPricePercent(deltaPricePercent.setScale(Math.max(highDay.scale(), lowDay.scale()),
+                RoundingMode.HALF_UP).stripTrailingZeros().floatValue());
         coinInfoDTO.setMarketCap(marketCap);
-        coinInfoDTO.setHighDay(highDay);
-        coinInfoDTO.setLowDay(lowDay);
+        coinInfoDTO.setHighDay(highDay.floatValue());
+        coinInfoDTO.setLowDay(lowDay.floatValue());
     }
 }
