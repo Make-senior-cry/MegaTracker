@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.mirea.megatracker.dto.CoinInfoDTO;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
@@ -35,7 +38,7 @@ public abstract class PriceInfo {
 
     public void convertToDTO(CoinInfoDTO coinInfoDTO) {
         coinInfoDTO.setCurrentPrice(currentPrice);
-        coinInfoDTO.setDeltaPrice(deltaPrice);
+        coinInfoDTO.setDeltaPrice(Math.round(deltaPrice * 100.0) / 100.0);
         coinInfoDTO.setDeltaPricePercent(deltaPricePercent);
         coinInfoDTO.setMarketCap(marketCap);
         coinInfoDTO.setHighDay(highDay);
