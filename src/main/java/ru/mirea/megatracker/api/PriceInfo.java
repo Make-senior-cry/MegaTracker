@@ -39,7 +39,7 @@ public abstract class PriceInfo {
     public void convertToDTO(CoinInfoDTO coinInfoDTO) {
         coinInfoDTO.setCurrentPrice(currentPrice);
         coinInfoDTO.setDeltaPrice(Math.round(deltaPrice * 100.0) / 100.0);
-        coinInfoDTO.setDeltaPricePercent(deltaPricePercent);
+        coinInfoDTO.setDeltaPricePercent(Math.round(deltaPricePercent * 100.0) / 100.0);
         coinInfoDTO.setMarketCap(marketCap);
         coinInfoDTO.setHighDay(highDay);
         coinInfoDTO.setLowDay(lowDay);
