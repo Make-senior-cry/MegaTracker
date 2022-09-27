@@ -41,12 +41,11 @@ public class AuthService {
     }
 
     public void checkRefreshToken(String email) {
-        Optional<Integer> verifiableId = usersRepository.findIdByEmail(email);
-        if (verifiableId.isEmpty()) return;
+        Optional<User> verifiableUser = usersRepository.findByEmail(email);
+        if (verifiableUser.isEmpty())
+            return;
 
-        Optional<RefreshToken> verifiableRefreshToken = refreshTokensRepository.findById(verifiableId.get());
-        if (verifiableRefreshToken.isEmpty()) return;
-
-        refreshTokensRepository.deleteById(verifiableId.get());
+        if (refreshTokensRepository.existsByUser(verifiableUser.get()))
+            refreshTokensRepository.deleteByUser(verifiableUser.get());
     }
 }
