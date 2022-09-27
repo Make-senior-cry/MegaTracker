@@ -17,6 +17,7 @@ import java.util.List;
 //TODO
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RequestMapping("/coins")
 public class CoinConroller {
 
