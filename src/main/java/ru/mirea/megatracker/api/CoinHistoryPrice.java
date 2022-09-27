@@ -21,7 +21,7 @@ public class CoinHistoryPrice {
 
     @Setter
     @JsonProperty(value = "close")
-    private long closePrice;
+    private double closePrice;
 
     public void setTime(long time) {
         this.time = convertUnixDateToString(time);
