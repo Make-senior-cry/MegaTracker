@@ -86,6 +86,8 @@ public class AuthController {
             throw new UserNotAuthenticatedException(errorMessage.toString());
         }
 
+        authService.checkRefreshToken(signInUserDTO.getEmail());
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(signInUserDTO.getEmail(), signInUserDTO.getPassword()));
 
