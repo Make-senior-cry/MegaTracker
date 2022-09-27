@@ -90,7 +90,7 @@ public class CoinService {
     public List<CoinPriceHistoryDTO> getPriceHistoryByTicker(String ticker) throws CoinErrorResponse{
 
         HistoryApiResponse historyApiResponse = webClient.get()
-                .uri(String.format("/v2/histoday?fsym=%s&tsym=USD&limit=24", ticker))
+                .uri(String.format("/v2/histoday?fsym=%s&tsym=USD&limit=30", ticker))
                 .header(apiKeyHeader)
                 .retrieve()
                 .bodyToMono(HistoryApiResponse.class)
@@ -98,11 +98,13 @@ public class CoinService {
         if(historyApiResponse == null || !historyApiResponse.getMessage().equals("Success")) {
             throw new CoinErrorResponse("Failed to get price history");
         }
-
-        List<CoinPriceHistoryDTO> response = new ArrayList<>(31);
-        for(CoinHistoryPrice price : historyApiResponse.getData().getCoinHistoryPrice()){
-
-        }
+        int count = 31;
+        List<CoinPriceHistoryDTO> response = new ArrayList<>(count);
+        List<CoinHistoryPrice> historyList = historyApiResponse.getData().getCoinHistoryPrice();
+//        for(int i = ){
+//            CoinPriceHistoryDTO coinPriceHistoryDTO = new CoinPriceHistoryDTO();
+//            coinPriceHistoryDTO
+//        }
         return response;
     }
 
