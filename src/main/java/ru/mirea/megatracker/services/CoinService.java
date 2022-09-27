@@ -88,6 +88,14 @@ public class CoinService {
     }
 
     public CoinPriceHistoryDTO getPriceHistoryByTicker(String ticker) throws CoinErrorResponse{
+
+        HistoryApiResponse historyApiResponse = webClient.get()
+                .uri(String.format("/v2/histoday?fsym=%s&tsym=USD&limit=24", ticker))
+                .header(apiKeyHeader)
+                .retrieve()
+                .bodyToMono(HistoryApiResponse.class)
+                .block();
+
         return null;
     }
 
