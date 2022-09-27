@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Setter
 @Getter
@@ -15,7 +18,7 @@ import lombok.Setter;
 public class HistoryApiResponse {
 
     @JsonProperty(value = "Response")
-    private String response;
+    private String message;
 
     @JsonProperty(value = "Data")
     private Data data;
@@ -27,8 +30,8 @@ public class HistoryApiResponse {
     @AllArgsConstructor
     public static class Data {
 
-        @JsonProperty(value = "CoinInfo")
-        private CoinInfo coinInfo;
+        @JsonProperty(value = "Data")
+        private List<CoinHistoryPrice> coinHistoryPrice = new ArrayList<>();
 
     }
 }
