@@ -20,15 +20,16 @@ public class CoinHistoryPrice {
     private String time;
 
     @Setter
-    @JsonProperty(value = " close")
+    @JsonProperty(value = "close")
     private long closePrice;
 
     public void setTime(long time) {
         this.time = convertUnixDateToString(time);
+        //this.time = String.valueOf(time);
     }
 
     private String convertUnixDateToString(long unixDate){
-        Date realDate = new Date(unixDate);
+        Date realDate = new Date(unixDate*1000L);
         return String.valueOf(realDate);
     }
 
@@ -36,5 +37,13 @@ public class CoinHistoryPrice {
         dto.setClosingPrice(this.closePrice);
         dto.setTime(this.time);
         dto.setPriceDif(priceDif);
+    }
+
+    @Override
+    public String toString() {
+        return "CoinHistoryPrice{" +
+                "time='" + time + '\'' +
+                ", closePrice=" + closePrice +
+                '}';
     }
 }
