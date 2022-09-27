@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @NoArgsConstructor
 @Getter
 @Setter
@@ -16,7 +14,7 @@ public class DetailedCoinInfoDTO {
     private double price;
     private boolean isFavorite;
     private String note;
-    private long timeFrom;
-    private long timeTo;
-    private List<CoinPriceHistoryDTO> priceHistory;
+//    private long timeFrom;
+//    private long timeTo;
+    //private List<CoinPriceHistoryDTO> priceHistory;
 }

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CoinErrorResponse {
+public class CoinErrorResponse extends RuntimeException {
     private String message;
 
     public CoinErrorResponse(String message) {

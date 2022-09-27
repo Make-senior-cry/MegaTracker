@@ -4,11 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.mirea.megatracker.api.Coin;
 import ru.mirea.megatracker.dto.CoinInfoDTO;
+import ru.mirea.megatracker.dto.DetailedCoinInfoDTO;
 import ru.mirea.megatracker.services.CoinService;
 import ru.mirea.megatracker.util.CoinErrorResponse;
-import ru.mirea.megatracker.util.TickerNotFoundException;
 import ru.mirea.megatracker.util.UserErrorResponse;
 import ru.mirea.megatracker.util.UserNotAuthenticatedException;
 
@@ -33,14 +32,12 @@ public class CoinConroller {
 
     @GetMapping()
     public ResponseEntity<?> getCoins(@RequestParam(value = "f", required = false) String filters){
-        ///List<Coin> ls = coinService.getTopList(null, 0, 10);
         return new ResponseEntity<List<CoinInfoDTO>>(coinService.getTopList(null, 10), HttpStatus.OK);
     }
 
     @GetMapping("/{ticker}")
     public ResponseEntity<?> getCoinByTicker(@PathVariable String ticker){
-        //return new ResponseEntity<Double>(coinService.getPrice(), HttpStatus.OK);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<DetailedCoinInfoDTO>(coinService.getCoinByTicker(ticker), HttpStatus.OK);
     }
 
 
@@ -56,7 +53,7 @@ public class CoinConroller {
 
 
     @ExceptionHandler
-    private ResponseEntity<CoinErrorResponse> handleException(TickerNotFoundException exception){
+    private ResponseEntity<CoinErrorResponse> handleException(CoinErrorResponse exception){
         CoinErrorResponse response = new CoinErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
