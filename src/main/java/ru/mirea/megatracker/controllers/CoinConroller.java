@@ -30,7 +30,7 @@ public class CoinConroller {
 
 
 
-    @GetMapping("")
+    @GetMapping()
     public ResponseEntity<?> getCoins(@RequestParam(value = "f", required = false) String filters){
         ///List<Coin> ls = coinService.getTopList(null, 0, 10);
         return new ResponseEntity<List<CoinInfoDTO>>(coinService.getTopList(null, 10), HttpStatus.OK);

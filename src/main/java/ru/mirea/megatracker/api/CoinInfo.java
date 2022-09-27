@@ -22,11 +22,11 @@ public class CoinInfo {
     private String ticker;
 
     @JsonProperty(value = "ImageUrl")
-    private String imageUrl;
+    private String iconUrl;
 
     public void convertToDTO(CoinInfoDTO coinInfoDTO) {
         coinInfoDTO.setName(name);
         coinInfoDTO.setTicker(ticker);
-        coinInfoDTO.setImageUrl("https://www.cryptocompare.com" + imageUrl);
+        coinInfoDTO.setIconUrl("https://www.cryptocompare.com" + iconUrl);
     }
 }

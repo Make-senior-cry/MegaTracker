@@ -16,13 +16,13 @@ import ru.mirea.megatracker.dto.CoinInfoDTO;
 public abstract class PriceInfo {
 
     @JsonProperty(value = "PRICE")
-    private double price;
+    private double currentPrice;
 
     @JsonProperty(value = "CHANGE24HOUR")
-    private double changeDay;
+    private double deltaPrice;
 
     @JsonProperty(value = "CHANGEPCT24HOUR")
-    private double changeDayPct;
+    private double deltaPricePercent;
 
     @JsonProperty(value = "MKTCAP")
     private long marketCap;
@@ -34,9 +34,9 @@ public abstract class PriceInfo {
     private double lowDay;
 
     public void convertToDTO(CoinInfoDTO coinInfoDTO) {
-        coinInfoDTO.setPrice(price);
-        coinInfoDTO.setChangeDay(changeDay);
-        coinInfoDTO.setChangeDayPct(changeDayPct);
+        coinInfoDTO.setCurrentPrice(currentPrice);
+        coinInfoDTO.setDeltaPrice(deltaPrice);
+        coinInfoDTO.setDeltaPricePercent(deltaPricePercent);
         coinInfoDTO.setMarketCap(marketCap);
         coinInfoDTO.setHighDay(highDay);
         coinInfoDTO.setLowDay(lowDay);

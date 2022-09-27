@@ -10,10 +10,10 @@ import lombok.Setter;
 public class CoinInfoDTO {
     private String name;
     private String ticker;
-    private String imageUrl;
-    private double price;
-    private double changeDay;
-    private double changeDayPct;
+    private String iconUrl;
+    private double currentPrice;
+    private double deltaPrice;
+    private double deltaPricePercent;
     private long marketCap;
     private double highDay;
     private double lowDay;
