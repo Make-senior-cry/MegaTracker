@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.mirea.megatracker.dto.CoinInfoDTO;
+import ru.mirea.megatracker.dto.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.DetailedCoinInfoDTO;
 import ru.mirea.megatracker.services.CoinService;
 import ru.mirea.megatracker.util.CoinErrorResponse;
@@ -18,13 +19,13 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RequestMapping("/coins")
-public class CoinConroller {
+public class CoinController {
 
     private final CoinService coinService;
 
 
     @Autowired
-    public CoinConroller(CoinService coinService) {
+    public CoinController(CoinService coinService) {
         this.coinService = coinService;
     }
 
@@ -43,7 +44,7 @@ public class CoinConroller {
 
     @GetMapping("/{ticker}/history")
     public ResponseEntity<?> getHistoryByTicker(@PathVariable String ticker){
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<List<CoinPriceHistoryDTO>>(coinService.getPriceHistoryByTicker(ticker), HttpStatus.OK);
     }
 
     @GetMapping("/favorite")

@@ -10,5 +10,5 @@ import lombok.Setter;
 public class CoinPriceHistoryDTO {
     private double closingPrice;
     private double priceDif;
-    private long time;
+    private String time;
 }
