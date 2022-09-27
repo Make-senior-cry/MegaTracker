@@ -32,7 +32,7 @@ public class CoinHistoryPrice {
         return String.valueOf(realDate);
     }
 
-    public void convertToDto(CoinPriceHistoryDTO dto, priceDif){
+    public void convertToDto(CoinPriceHistoryDTO dto, double priceDif){
         dto.setClosingPrice(this.closePrice);
         dto.setTime(this.time);
         dto.setPriceDif(priceDif);
