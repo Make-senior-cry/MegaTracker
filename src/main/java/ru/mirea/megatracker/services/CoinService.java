@@ -99,12 +99,15 @@ public class CoinService {
             throw new CoinErrorResponse("Failed to get price history");
         }
         int count = 31;
+        System.out.println(historyApiResponse.getData().getCoinHistoryPrice());
         List<CoinPriceHistoryDTO> response = new ArrayList<>(count);
         List<CoinHistoryPrice> historyList = historyApiResponse.getData().getCoinHistoryPrice();
-//        for(int i = ){
-//            CoinPriceHistoryDTO coinPriceHistoryDTO = new CoinPriceHistoryDTO();
-//            coinPriceHistoryDTO
-//        }
+        for(int i = 1; i < count ;i++){
+            CoinPriceHistoryDTO coinPriceHistoryDTO = new CoinPriceHistoryDTO();
+            double priceDif = historyList.get(i).getClosePrice()-historyList.get(i-1).getClosePrice();
+            historyList.get(i).convertToDto(coinPriceHistoryDTO, priceDif);
+            response.add(coinPriceHistoryDTO);
+        }
         return response;
     }
 
