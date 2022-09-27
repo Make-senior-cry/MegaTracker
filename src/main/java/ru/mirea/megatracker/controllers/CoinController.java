@@ -19,13 +19,13 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RequestMapping("/coins")
-public class CoinConroller {
+public class CoinController {
 
     private final CoinService coinService;
 
 
     @Autowired
-    public CoinConroller(CoinService coinService) {
+    public CoinController(CoinService coinService) {
         this.coinService = coinService;
     }
 
