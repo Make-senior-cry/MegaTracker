@@ -10,13 +10,14 @@ import ru.mirea.megatracker.api.CoinInfo;
 import ru.mirea.megatracker.api.CoinPriceData;
 import ru.mirea.megatracker.api.response.ExchangePairApiResponse;
 import ru.mirea.megatracker.api.response.HistoryApiResponse;
-import ru.mirea.megatracker.api.response.PriceApiResponse;
 import ru.mirea.megatracker.api.response.TopListApiResponse;
 import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
 import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
 import ru.mirea.megatracker.util.CoinErrorResponse;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,18 +78,7 @@ public class CoinService {
             throw new CoinErrorResponse("External API error 1");
         }
         exchangePairApiResponse.getData().getCoinInfo().convertToDTO(response);
-
-
-        PriceApiResponse priceApiResponse = webClient.get()
-                .uri(String.format("/price?fsym=%s&tsyms=USD", ticker))
-                .header(apiKeyHeader)
-                .retrieve()
-                .bodyToMono(PriceApiResponse.class)
-                .block();
-        if (priceApiResponse == null) {
-            throw new CoinErrorResponse("External API error 2");
-        }
-        response.setPrice(priceApiResponse.getPrice());
+        exchangePairApiResponse.getData().getPriceInfoUSD().convertToDTO(response);
 
 
         return response;
@@ -111,8 +101,13 @@ public class CoinService {
         List<CoinHistoryPrice> historyList = historyApiResponse.getData().getCoinHistoryPrice();
         for(int i = 1; i < count ;i++){
             CoinPriceHistoryDTO coinPriceHistoryDTO = new CoinPriceHistoryDTO();
-            double priceDif = historyList.get(i).getClosePrice()-historyList.get(i-1).getClosePrice();
-            historyList.get(i).convertToDto(coinPriceHistoryDTO, priceDif);
+            BigDecimal curr = historyList.get(i).getClosingPrice();
+            BigDecimal prev = historyList.get(i-1).getClosingPrice();
+            float deltaPrice = curr.subtract(prev)
+                    .setScale(Math.max(prev.scale(), curr.scale()), RoundingMode.HALF_UP)
+                    .stripTrailingZeros()
+                    .floatValue();
+            historyList.get(i).convertToDto(coinPriceHistoryDTO, deltaPrice);
             response.add(coinPriceHistoryDTO);
         }
         return response;

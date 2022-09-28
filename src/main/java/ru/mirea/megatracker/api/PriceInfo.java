@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
+import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -38,12 +39,20 @@ public abstract class PriceInfo {
 
     public void convertToDTO(CoinInfoDTO coinInfoDTO) {
         coinInfoDTO.setCurrentPrice(currentPrice.floatValue());
-        coinInfoDTO.setDeltaPrice(deltaPrice.setScale(Math.max(highDay.scale(), lowDay.scale()),
+        coinInfoDTO.setDeltaPrice(deltaPrice.setScale(Math.max(highDay.scale(), Math.max(lowDay.scale(), currentPrice.scale())),
                 RoundingMode.HALF_UP).stripTrailingZeros().floatValue());
-        coinInfoDTO.setDeltaPricePercent(deltaPricePercent.setScale(Math.max(highDay.scale(), lowDay.scale()),
+        coinInfoDTO.setDeltaPricePercent(deltaPricePercent.setScale(Math.max(highDay.scale(), Math.max(lowDay.scale(), currentPrice.scale())),
                 RoundingMode.HALF_UP).stripTrailingZeros().floatValue());
-        coinInfoDTO.setMarketCap(marketCap);
-        coinInfoDTO.setHighDay(highDay.floatValue());
-        coinInfoDTO.setLowDay(lowDay.floatValue());
+    }
+
+    public void convertToDTO(DetailedCoinInfoDTO detailedCoinInfoDTO){
+        detailedCoinInfoDTO.setCurrentPrice(currentPrice.floatValue());
+        detailedCoinInfoDTO.setDeltaPrice(deltaPrice.setScale(Math.max(highDay.scale(), Math.max(lowDay.scale(), currentPrice.scale())),
+                RoundingMode.HALF_UP).stripTrailingZeros().floatValue());
+        detailedCoinInfoDTO.setDeltaPricePercent(deltaPricePercent.setScale(Math.max(highDay.scale(), Math.max(lowDay.scale(), currentPrice.scale())),
+                RoundingMode.HALF_UP).stripTrailingZeros().floatValue());
+        detailedCoinInfoDTO.setMarketCap(marketCap);
+        detailedCoinInfoDTO.setHighDayPrice(highDay.stripTrailingZeros().floatValue());
+        detailedCoinInfoDTO.setLowDayPrice(lowDay.stripTrailingZeros().floatValue());
     }
 }

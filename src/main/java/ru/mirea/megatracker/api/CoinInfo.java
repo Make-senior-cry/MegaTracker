@@ -34,6 +34,5 @@ public class CoinInfo {
     public void convertToDTO(DetailedCoinInfoDTO detailedCoinInfoDTO) {
         detailedCoinInfoDTO.setName(name);
         detailedCoinInfoDTO.setTicker(ticker);
-        detailedCoinInfoDTO.setIconUrl("https://www.cryptocompare.com" + iconUrl);
     }
 }

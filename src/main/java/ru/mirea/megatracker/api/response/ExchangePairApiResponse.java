@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.mirea.megatracker.api.CoinInfo;
+import ru.mirea.megatracker.api.PriceInfoUSD;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
@@ -32,6 +33,9 @@ public class ExchangePairApiResponse {
 
         @JsonProperty(value = "CoinInfo")
         private CoinInfo coinInfo;
+
+        @JsonProperty(value = "AggregatedData")
+        private PriceInfoUSD priceInfoUSD;
 
     }
 }

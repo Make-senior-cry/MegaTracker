@@ -13,5 +13,5 @@ import lombok.Setter;
 public class PriceApiResponse {
 
     @JsonProperty(value = "USD")
-    private double price;
+    private float price;
 }
