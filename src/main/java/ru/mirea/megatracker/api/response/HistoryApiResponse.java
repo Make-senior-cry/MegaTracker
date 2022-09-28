@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.mirea.megatracker.api.CoinHistoryPrice;
+import ru.mirea.megatracker.api.coin.CoinHistoryPrice;
 
 import java.util.ArrayList;
 import java.util.List;

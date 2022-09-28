@@ -7,8 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.mirea.megatracker.api.CoinInfo;
-import ru.mirea.megatracker.api.PriceInfoUSD;
+import ru.mirea.megatracker.api.coin.CoinInfo;
+import ru.mirea.megatracker.api.coin.PriceInfoUSD;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter

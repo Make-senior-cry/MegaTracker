@@ -1,5 +1,4 @@
-package ru.mirea.megatracker.api;
-
+package ru.mirea.megatracker.api.coin;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,13 +7,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
+
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CoinPriceData {
+public class Coin {
 
-    @JsonProperty(value = "USD")
-    private PriceInfoUSD priceInfoUSD;
+    @JsonProperty(value = "RAW")
+    private CoinPriceData coinPriceData;
+
+    @JsonProperty(value = "CoinInfo")
+    private CoinInfo coinInfo;
 }
