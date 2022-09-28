@@ -40,6 +40,7 @@ public class AuthService {
         return usersRepository.findByEmail(email);
     }
 
+    @Transactional
     public void checkRefreshToken(String email) {
         Optional<User> verifiableUser = usersRepository.findByEmail(email);
         if (verifiableUser.isEmpty())
@@ -47,5 +48,10 @@ public class AuthService {
 
         if (refreshTokensRepository.existsByUser(verifiableUser.get()))
             refreshTokensRepository.deleteByUser(verifiableUser.get());
+    }
+
+    @Transactional
+    public void logOut(String refreshToken) {
+        refreshTokensRepository.deleteByToken(refreshToken);
     }
 }

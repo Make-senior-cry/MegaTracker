@@ -24,7 +24,9 @@ import ru.mirea.megatracker.services.RefreshTokenService;
 import ru.mirea.megatracker.util.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
@@ -112,6 +114,12 @@ public class AuthController {
                     return ResponseEntity.ok(new TokenRefreshResponse(accessToken, requestRefreshToken));
                 })
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logOut(@RequestBody Map<String, String> request) {
+        authService.logOut(request.get("refreshToken"));
+        return ResponseEntity.ok(new UserErrorResponse("User logged out successfully!"));
     }
 
 
