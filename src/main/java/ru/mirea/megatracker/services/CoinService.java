@@ -84,7 +84,7 @@ public class CoinService {
         return response;
     }
 
-    public List<CoinPriceHistoryDTO> getPriceHistoryByTicker(String ticker) throws CoinErrorResponse{
+    public List<CoinPriceHistoryDTO> getPriceHistoryByTicker(String ticker) throws CoinErrorResponse {
 
         HistoryApiResponse historyApiResponse = webClient.get()
                 .uri(String.format("/v2/histoday?fsym=%s&tsym=USD&limit=30", ticker))
@@ -92,17 +92,16 @@ public class CoinService {
                 .retrieve()
                 .bodyToMono(HistoryApiResponse.class)
                 .block();
-        if(historyApiResponse == null || !historyApiResponse.getMessage().equals("Success")) {
+        if (historyApiResponse == null || !historyApiResponse.getMessage().equals("Success")) {
             throw new CoinErrorResponse("Failed to get price history");
         }
         int count = 31;
-        System.out.println(historyApiResponse.getData().getCoinHistoryPrice());
         List<CoinPriceHistoryDTO> response = new ArrayList<>(count);
         List<CoinHistoryPrice> historyList = historyApiResponse.getData().getCoinHistoryPrice();
-        for(int i = 1; i < count ;i++){
+        for (int i = 1; i < count; i++) {
             CoinPriceHistoryDTO coinPriceHistoryDTO = new CoinPriceHistoryDTO();
             BigDecimal curr = historyList.get(i).getClosingPrice();
-            BigDecimal prev = historyList.get(i-1).getClosingPrice();
+            BigDecimal prev = historyList.get(i - 1).getClosingPrice();
             float deltaPrice = curr.subtract(prev)
                     .setScale(Math.max(prev.scale(), curr.scale()), RoundingMode.HALF_UP)
                     .stripTrailingZeros()
@@ -112,6 +111,4 @@ public class CoinService {
         }
         return response;
     }
-
-
 }

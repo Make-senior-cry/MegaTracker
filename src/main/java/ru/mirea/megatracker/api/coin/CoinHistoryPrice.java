@@ -27,7 +27,6 @@ public class CoinHistoryPrice {
 
     public void setTime(long time) {
         this.time = convertUnixDateToString(time);
-        //this.dateTime = String.valueOf(dateTime);
     }
 
     private String convertUnixDateToString(long unixDate){

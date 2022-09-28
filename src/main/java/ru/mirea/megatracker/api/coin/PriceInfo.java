@@ -41,16 +41,14 @@ public abstract class PriceInfo {
         coinInfoDTO.setCurrentPrice(currentPrice.floatValue());
         coinInfoDTO.setDeltaPrice(deltaPrice.setScale(Math.max(highDay.scale(), Math.max(lowDay.scale(), currentPrice.scale())),
                 RoundingMode.HALF_UP).stripTrailingZeros().floatValue());
-        coinInfoDTO.setDeltaPricePercent(deltaPricePercent.setScale(Math.max(highDay.scale(), Math.max(lowDay.scale(), currentPrice.scale())),
-                RoundingMode.HALF_UP).stripTrailingZeros().floatValue());
+        coinInfoDTO.setDeltaPricePercent(deltaPricePercent.setScale(2, RoundingMode.HALF_UP).floatValue());
     }
 
     public void convertToDTO(DetailedCoinInfoDTO detailedCoinInfoDTO){
         detailedCoinInfoDTO.setCurrentPrice(currentPrice.floatValue());
         detailedCoinInfoDTO.setDeltaPrice(deltaPrice.setScale(Math.max(highDay.scale(), Math.max(lowDay.scale(), currentPrice.scale())),
                 RoundingMode.HALF_UP).stripTrailingZeros().floatValue());
-        detailedCoinInfoDTO.setDeltaPricePercent(deltaPricePercent.setScale(Math.max(highDay.scale(), Math.max(lowDay.scale(), currentPrice.scale())),
-                RoundingMode.HALF_UP).stripTrailingZeros().floatValue());
+        detailedCoinInfoDTO.setDeltaPricePercent(deltaPricePercent.setScale(2, RoundingMode.HALF_UP).floatValue());
         detailedCoinInfoDTO.setMarketCap(marketCap);
         detailedCoinInfoDTO.setHighDayPrice(highDay.stripTrailingZeros().floatValue());
         detailedCoinInfoDTO.setLowDayPrice(lowDay.stripTrailingZeros().floatValue());
