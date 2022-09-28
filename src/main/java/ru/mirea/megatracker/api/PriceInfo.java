@@ -6,11 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.mirea.megatracker.dto.CoinInfoDTO;
+import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor

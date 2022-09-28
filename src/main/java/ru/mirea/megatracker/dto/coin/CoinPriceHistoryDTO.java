@@ -1,4 +1,4 @@
-package ru.mirea.megatracker.dto;
+package ru.mirea.megatracker.dto.coin;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CoinPriceHistoryDTO {
-    private double closingPrice;
-    private double priceDif;
-    private String time;
+    private float closingPrice;
+    private float deltaClosingPrice;
+    private String dateTime;
 }

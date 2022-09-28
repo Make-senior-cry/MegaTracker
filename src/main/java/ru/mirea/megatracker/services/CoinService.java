@@ -12,9 +12,9 @@ import ru.mirea.megatracker.api.response.ExchangePairApiResponse;
 import ru.mirea.megatracker.api.response.HistoryApiResponse;
 import ru.mirea.megatracker.api.response.PriceApiResponse;
 import ru.mirea.megatracker.api.response.TopListApiResponse;
-import ru.mirea.megatracker.dto.CoinInfoDTO;
-import ru.mirea.megatracker.dto.CoinPriceHistoryDTO;
-import ru.mirea.megatracker.dto.DetailedCoinInfoDTO;
+import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
+import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
+import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
 import ru.mirea.megatracker.util.CoinErrorResponse;
 
 import java.util.ArrayList;

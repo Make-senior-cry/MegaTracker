@@ -7,8 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.mirea.megatracker.dto.CoinInfoDTO;
-import ru.mirea.megatracker.dto.DetailedCoinInfoDTO;
+import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
+import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
@@ -34,6 +34,6 @@ public class CoinInfo {
     public void convertToDTO(DetailedCoinInfoDTO detailedCoinInfoDTO) {
         detailedCoinInfoDTO.setName(name);
         detailedCoinInfoDTO.setTicker(ticker);
-        detailedCoinInfoDTO.setImageUrl("https://www.cryptocompare.com" + iconUrl);
+        detailedCoinInfoDTO.setIconUrl("https://www.cryptocompare.com" + iconUrl);
     }
 }

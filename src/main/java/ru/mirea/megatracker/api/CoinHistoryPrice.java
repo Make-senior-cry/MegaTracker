@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.mirea.megatracker.dto.CoinPriceHistoryDTO;
+import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 
 import java.util.Date;
 
@@ -16,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class CoinHistoryPrice {
 
-    @JsonProperty(value = "time")
+    @JsonProperty(value = "dateTime")
     private String time;
 
     @Setter
@@ -25,7 +25,7 @@ public class CoinHistoryPrice {
 
     public void setTime(long time) {
         this.time = convertUnixDateToString(time);
-        //this.time = String.valueOf(time);
+        //this.dateTime = String.valueOf(dateTime);
     }
 
     private String convertUnixDateToString(long unixDate){
@@ -35,14 +35,14 @@ public class CoinHistoryPrice {
 
     public void convertToDto(CoinPriceHistoryDTO dto, double priceDif){
         dto.setClosingPrice(this.closePrice);
-        dto.setTime(this.time);
-        dto.setPriceDif(priceDif);
+        dto.setDateTime(this.time);
+        dto.setDeltaClosingPrice(priceDif);
     }
 
     @Override
     public String toString() {
         return "CoinHistoryPrice{" +
-                "time='" + time + '\'' +
+                "dateTime='" + time + '\'' +
                 ", closePrice=" + closePrice +
                 '}';
     }

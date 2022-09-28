@@ -10,8 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import ru.mirea.megatracker.dto.SignInUserDTO;
-import ru.mirea.megatracker.dto.SignUpUserDTO;
+import ru.mirea.megatracker.dto.user.SignInUserDTO;
+import ru.mirea.megatracker.dto.user.SignUpUserDTO;
 import ru.mirea.megatracker.models.RefreshToken;
 import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.payload.JwtResponse;
@@ -24,7 +24,6 @@ import ru.mirea.megatracker.services.RefreshTokenService;
 import ru.mirea.megatracker.util.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
