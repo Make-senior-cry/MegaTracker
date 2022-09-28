@@ -17,7 +17,4 @@ public class CoinPriceData {
 
     @JsonProperty(value = "USD")
     private PriceInfoUSD priceInfoUSD;
-
-//    @JsonProperty(value = "RUB")
-//    private PriceInfoRUB priceInfoRUB;
 }
