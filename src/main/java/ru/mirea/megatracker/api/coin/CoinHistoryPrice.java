@@ -19,15 +19,16 @@ import java.util.Date;
 public class CoinHistoryPrice {
 
     @JsonProperty(value = "time")
-    private String time;
+    private long time;
 
     @Setter
     @JsonProperty(value = "close")
     private BigDecimal closingPrice;
 
     public void setTime(long time) {
-        this.time = convertUnixDateToString(time);
+        this.time = time*1000L;
     }
+
 
     private String convertUnixDateToString(long unixDate){
         Date realDate = new Date(unixDate*1000L);
