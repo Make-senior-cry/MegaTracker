@@ -84,4 +84,20 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="1.0.6" author="Artem Kovalenko">
+        <createTable tableName="notes">
+            <column name="ticker" type="varchar(6)">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="user_id" type="int" >
+                <constraints nullable="false" foreignKeyName="note" references="users(id)"/>
+            </column>
+
+            <column name="note" type="varchar(100)"/>
+
+            <column name="is_favorite" type="boolean"/>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>
