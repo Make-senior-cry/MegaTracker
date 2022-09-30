@@ -31,4 +31,16 @@ public class NoteService {
             notesRepository.save(note);
         }
     }
+
+    public void setFavoriteForCoin(String email, String ticker, boolean isFavorite) {
+        Optional<User> user = usersRepository.findByEmail(email);
+
+        if (user.isPresent()) {
+            Note note = new Note();
+            note.setUser(user.get());
+            note.setFavorite(isFavorite);
+            note.setTicker(ticker);
+            notesRepository.save(note);
+        }
+    }
 }
