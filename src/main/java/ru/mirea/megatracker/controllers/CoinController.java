@@ -67,9 +67,11 @@ public class CoinController {
     }
 
     @PostMapping("/{ticker}/set-favorite")
-    public ResponseEntity<?> setFavorite(@PathVariable String ticker, @RequestBody boolean isFavorite) {
-
-        return null;
+    public ResponseEntity<?> setFavorite(@PathVariable String ticker, HttpServletRequest request,
+                                         @RequestBody Map<String, Boolean> requestBody) {
+        String token = request.getHeader("Authorization").substring(7);
+        noteService.setFavoriteForCoin(jwtUtil.getUsernameFromJwtToken(token), ticker, requestBody.get("isFavorite"));
+        return ResponseEntity.ok("Coin condition successfully updated!");
     }
 
 
