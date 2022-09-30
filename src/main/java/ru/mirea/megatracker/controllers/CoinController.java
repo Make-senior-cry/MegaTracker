@@ -1,5 +1,6 @@
 package ru.mirea.megatracker.controllers;
 
+import liquibase.pro.packaged.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
 import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
 import ru.mirea.megatracker.services.CoinService;
+import ru.mirea.megatracker.services.NoteService;
 import ru.mirea.megatracker.util.CoinErrorResponse;
 import ru.mirea.megatracker.util.UserErrorResponse;
 import ru.mirea.megatracker.util.UserNotAuthenticatedException;
@@ -22,11 +24,13 @@ import java.util.List;
 public class CoinController {
 
     private final CoinService coinService;
+    private final NoteService noteService;
 
 
     @Autowired
-    public CoinController(CoinService coinService) {
+    public CoinController(CoinService coinService, NoteService noteService) {
         this.coinService = coinService;
+        this.noteService = noteService;
     }
 
 
@@ -53,9 +57,9 @@ public class CoinController {
     }
 
     @PostMapping("/{ticker}/note")
-    public ResponseEntity<?> addNote(@PathVariable String ticker, @RequestBody String note) {
-
-        return null;
+    public ResponseEntity<?> addNote(@PathVariable String ticker, @RequestBody String email, @RequestBody String note) {
+        noteService.addNoteForCoin(email, ticker, note);
+        return ResponseEntity.ok("Note added successfully!");
     }
 
     @PostMapping("/{ticker}/set-favorite")
