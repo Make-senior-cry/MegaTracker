@@ -15,8 +15,7 @@ import ru.mirea.megatracker.util.UserErrorResponse;
 import ru.mirea.megatracker.util.UserNotAuthenticatedException;
 
 import java.util.List;
-
-//TODO
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
@@ -57,8 +56,8 @@ public class CoinController {
     }
 
     @PostMapping("/{ticker}/note")
-    public ResponseEntity<?> addNote(@PathVariable String ticker, @RequestBody String email, @RequestBody String note) {
-        noteService.addNoteForCoin(email, ticker, note);
+    public ResponseEntity<?> addNote(@PathVariable String ticker, @RequestBody Map<String, String> request) {
+        noteService.addNoteForCoin(request.get("email"), ticker, request.get("note"));
         return ResponseEntity.ok("Note added successfully!");
     }
 
