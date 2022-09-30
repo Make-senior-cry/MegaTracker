@@ -52,6 +52,18 @@ public class CoinController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{ticker}/note")
+    public ResponseEntity<?> addNote(@PathVariable String ticker, @RequestBody String note) {
+
+        return null;
+    }
+
+    @PostMapping("/{ticker}/set-favorite")
+    public ResponseEntity<?> setFavorite(@PathVariable String ticker, @RequestBody boolean isFavorite) {
+
+        return null;
+    }
+
 
     @ExceptionHandler
     private ResponseEntity<CoinErrorResponse> handleException(CoinErrorResponse exception){
