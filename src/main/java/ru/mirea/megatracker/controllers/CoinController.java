@@ -1,6 +1,5 @@
 package ru.mirea.megatracker.controllers;
 
-import liquibase.pro.packaged.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,12 +7,14 @@ import org.springframework.web.bind.annotation.*;
 import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
 import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
+import ru.mirea.megatracker.security.jwt.JwtUtil;
 import ru.mirea.megatracker.services.CoinService;
 import ru.mirea.megatracker.services.NoteService;
 import ru.mirea.megatracker.util.CoinErrorResponse;
 import ru.mirea.megatracker.util.UserErrorResponse;
 import ru.mirea.megatracker.util.UserNotAuthenticatedException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -24,12 +25,14 @@ public class CoinController {
 
     private final CoinService coinService;
     private final NoteService noteService;
+    private final JwtUtil jwtUtil;
 
 
     @Autowired
-    public CoinController(CoinService coinService, NoteService noteService) {
+    public CoinController(CoinService coinService, NoteService noteService, JwtUtil jwtUtil) {
         this.coinService = coinService;
         this.noteService = noteService;
+        this.jwtUtil = jwtUtil;
     }
 
 
@@ -56,8 +59,10 @@ public class CoinController {
     }
 
     @PostMapping("/{ticker}/note")
-    public ResponseEntity<?> addNote(@PathVariable String ticker, @RequestBody Map<String, String> request) {
-        noteService.addNoteForCoin(request.get("email"), ticker, request.get("note"));
+    public ResponseEntity<?> addNote(@PathVariable String ticker, HttpServletRequest request,
+                                     @RequestBody Map<String, String> requestBody) {
+        String token = request.getHeader("Authorization").substring(7);
+        noteService.addNoteForCoin(jwtUtil.getUsernameFromJwtToken(token), ticker, requestBody.get("note"));
         return ResponseEntity.ok("Note added successfully!");
     }
 
