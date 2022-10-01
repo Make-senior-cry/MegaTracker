@@ -44,8 +44,10 @@ public class CoinController {
     }
 
     @GetMapping("/{ticker}")
-    public ResponseEntity<?> getCoinByTicker(@PathVariable String ticker){
-        return new ResponseEntity<DetailedCoinInfoDTO>(coinService.getCoinByTicker(ticker), HttpStatus.OK);
+    public ResponseEntity<?> getCoinByTicker(@PathVariable String ticker, HttpServletRequest request){
+        String token = request.getHeader("Authorization").substring(7);
+        return new ResponseEntity<DetailedCoinInfoDTO>(coinService.getCoinByTicker(jwtUtil.getUsernameFromJwtToken(token),
+                ticker), HttpStatus.OK);
     }
 
 
