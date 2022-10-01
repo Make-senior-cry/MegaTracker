@@ -14,12 +14,17 @@ import ru.mirea.megatracker.api.response.TopListApiResponse;
 import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
 import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
+import ru.mirea.megatracker.models.Note;
+import ru.mirea.megatracker.models.User;
+import ru.mirea.megatracker.repositories.NotesRepository;
+import ru.mirea.megatracker.repositories.UsersRepository;
 import ru.mirea.megatracker.util.CoinErrorResponse;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CoinService {
@@ -29,10 +34,14 @@ public class CoinService {
     private String apiKey;
 
     private final String apiKeyHeader;
+    private final UsersRepository usersRepository;
+    private final NotesRepository notesRepository;
 
     @Autowired
-    public CoinService(WebClient webClient) {
+    public CoinService(WebClient webClient, UsersRepository usersRepository, NotesRepository notesRepository) {
         this.webClient = webClient;
+        this.usersRepository = usersRepository;
+        this.notesRepository = notesRepository;
         this.apiKeyHeader = "Apikey {" + apiKey + "}";
     }
 
@@ -65,7 +74,7 @@ public class CoinService {
         }
     }
 
-    public DetailedCoinInfoDTO getCoinByTicker(String ticker) throws CoinErrorResponse {
+    public DetailedCoinInfoDTO getCoinByTicker(String email, String ticker) throws CoinErrorResponse {
         ExchangePairApiResponse exchangePairApiResponse = webClient.get()
                 .uri(String.format("/top/exchanges/full?fsym=%s&tsym=USD&limit=1", ticker))
                 .header(apiKeyHeader)
@@ -80,7 +89,13 @@ public class CoinService {
         exchangePairApiResponse.getData().getCoinInfo().convertToDTO(response);
         exchangePairApiResponse.getData().getPriceInfoUSD().convertToDTO(response);
 
+        Optional<User> user = usersRepository.findByEmail(email);
+        Optional<Note> note = notesRepository.findByUserAndTicker(user.get(), ticker);
 
+        if (note.isPresent()) {
+            response.setNote(note.get().getNote());
+            response.setFavorite(note.get().isFavorite());
+        }
         return response;
     }
 
