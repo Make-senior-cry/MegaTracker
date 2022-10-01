@@ -36,9 +36,9 @@ public class CoinService {
         this.apiKeyHeader = "Apikey {" + apiKey + "}";
     }
 
-    public List<CoinInfoDTO> getTopList(List<?> filters, int pageSize) throws CoinErrorResponse {
+    public List<CoinInfoDTO> getTopList(List<?> filters, int page, int pageSize) throws CoinErrorResponse {
         TopListApiResponse topListApiResponse = webClient.get()
-                .uri(String.format("top/totalvolfull?limit=%d&tsym=USD", pageSize))
+                .uri(String.format("top/totalvolfull?limit=%d&tsym=USD&page=%d", pageSize, page))
                 .header(apiKeyHeader)
                 .retrieve().bodyToMono(TopListApiResponse.class).block();
 
