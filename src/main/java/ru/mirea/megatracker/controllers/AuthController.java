@@ -98,7 +98,7 @@ public class AuthController {
 
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
 
-        return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken.getToken(), userDetails.getEmail()));
+        return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken.getToken()));
     }
 
     @PostMapping("/refreshtoken")
