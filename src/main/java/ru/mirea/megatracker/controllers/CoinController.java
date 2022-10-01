@@ -38,8 +38,9 @@ public class CoinController {
 
 
     @GetMapping()
-    public ResponseEntity<?> getCoins(@RequestParam(value = "f", required = false) String filters){
-        return new ResponseEntity<List<CoinInfoDTO>>(coinService.getTopList(null, 10), HttpStatus.OK);
+    public ResponseEntity<?> getCoins(@RequestParam(value = "f", required = false) String filters, @RequestParam int page,
+                                      @RequestParam int pageSize){
+        return new ResponseEntity<List<CoinInfoDTO>>(coinService.getTopList(null, page, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("/{ticker}")
