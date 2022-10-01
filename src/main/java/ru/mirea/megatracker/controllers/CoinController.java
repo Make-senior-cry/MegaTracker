@@ -15,6 +15,7 @@ import ru.mirea.megatracker.util.UserErrorResponse;
 import ru.mirea.megatracker.util.UserNotAuthenticatedException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +40,12 @@ public class CoinController {
 
     @GetMapping()
     public ResponseEntity<?> getCoins(@RequestParam(value = "f", required = false) String filters, @RequestParam int page,
-                                      @RequestParam int pageSize){
-        return new ResponseEntity<List<CoinInfoDTO>>(coinService.getTopList(null, page, pageSize), HttpStatus.OK);
+                                      @RequestParam int pageSize) {
+        Map<Object, Object> response = new HashMap<>();
+        int pageCount = (3255 / pageSize) + 1;
+        response.put("pageCount", pageCount);
+        response.put("coins", coinService.getTopList(null, page, pageSize));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{ticker}")
