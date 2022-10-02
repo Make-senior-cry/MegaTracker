@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
@@ -39,19 +40,17 @@ public class CoinController {
 
 
     @GetMapping()
-    public ResponseEntity<?> getCoins(@RequestParam(value = "minPrice", required = false) float minPrice,
-                                      @RequestParam(value = "maxPrice", required = false) float maxPrice,
-                                      @RequestParam(value = "minCap", required = false) long minCap,
-                                      @RequestParam(value = "maxCap", required = false) long maxCap,
-                                      @RequestParam(value = "isIncreased", required = false) boolean isIncreased,
+    public ResponseEntity<?> getCoins(@RequestParam(value = "minPrice", required = false) Optional<Float> minPrice,
+                                      @RequestParam(value = "maxPrice", required = false) Optional<Float> maxPrice,
+                                      @RequestParam(value = "isIncreased", required = false) Optional<Boolean> isIncreased,
                                       @RequestParam int page,
                                       @RequestParam int pageSize) {
-        Map<Object, Object> response = new HashMap<>();
-        int pageCount = (3255 / pageSize) + 1;
-        response.put("pageCount", pageCount);
-        Filter filter = new Filter(minPrice, maxPrice, minCap, maxCap, isIncreased);
-        response.put("coins", coinService.getTopList(filter , page, pageSize));
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        Filter filter = new Filter();
+        minPrice.ifPresent(filter::setMinPrice);
+        maxPrice.ifPresent(filter::setMaxPrice);
+        isIncreased.ifPresent(filter::setIncreased);
+
+        return new ResponseEntity<>(coinService.getTopList(filter , page, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("/{ticker}")
