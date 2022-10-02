@@ -61,9 +61,12 @@ public class CoinService {
             for (Coin coin : coins) {
                 CoinInfoDTO coinInfoDTO = new CoinInfoDTO();
                 coinPriceData = coin.getCoinPriceData();
+                if(coinPriceData != null){
+                    coinPriceData.getPriceInfoUSD().convertToDTO(coinInfoDTO);
+                }
                 coinInfo = coin.getCoinInfo();
 
-                coinPriceData.getPriceInfoUSD().convertToDTO(coinInfoDTO);
+
                 coinInfo.convertToDTO(coinInfoDTO);
 
                 response.add(coinInfoDTO);
