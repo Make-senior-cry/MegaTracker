@@ -19,6 +19,7 @@ import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.repositories.NotesRepository;
 import ru.mirea.megatracker.repositories.UsersRepository;
 import ru.mirea.megatracker.util.CoinErrorResponse;
+import ru.mirea.megatracker.util.Filter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -45,7 +46,7 @@ public class CoinService {
         this.apiKeyHeader = "Apikey {" + apiKey + "}";
     }
 
-    public List<CoinInfoDTO> getTopList(List<?> filters, int page, int pageSize) throws CoinErrorResponse {
+    public List<CoinInfoDTO> getTopList(int page, int pageSize) throws CoinErrorResponse {
         TopListApiResponse topListApiResponse = webClient.get()
                 .uri(String.format("top/totalvolfull?limit=%d&tsym=USD&page=%d", pageSize, page - 1))
                 .header(apiKeyHeader)
@@ -75,6 +76,46 @@ public class CoinService {
         } else {
             throw new CoinErrorResponse("External API error");
         }
+    }
+
+
+    public List<CoinInfoDTO> getTopList(Filter filter, int page, int pageSize){
+        List<Coin> postFilter = new ArrayList<>();
+
+        for(int i = 0; i < 66 ; i++) {
+            TopListApiResponse topListApiResponse = webClient.get()
+                    .uri(String.format("top/totalvolfull?limit=%d&tsym=USD&page=%d", 50, i))
+                    .header(apiKeyHeader)
+                    .retrieve().bodyToMono(TopListApiResponse.class).block();
+            if (topListApiResponse == null || !topListApiResponse.getMessage().equals("Success")){
+                throw new CoinErrorResponse("Filters error");
+            }
+            List<Coin> coins = topListApiResponse.getData();
+            for(Coin coin : coins) {
+                if(coin.getCoinPriceData() == null) {continue;}
+                if(filter.isOk(coin)){
+                   postFilter.add(coin);
+                }
+            }
+
+        }
+        List<CoinInfoDTO> response = new ArrayList<>();
+
+        for(int i = (page-1)*pageSize; i < page*pageSize; i++){
+            Coin currentFilteredCoin = postFilter.get(i);
+            CoinInfoDTO coinInfoDTO = new CoinInfoDTO();
+            CoinPriceData coinPriceData = currentFilteredCoin.getCoinPriceData();
+            if(coinPriceData != null){
+                coinPriceData.getPriceInfoUSD().convertToDTO(coinInfoDTO);
+            }
+            CoinInfo coinInfo = currentFilteredCoin.getCoinInfo();
+
+
+            coinInfo.convertToDTO(coinInfoDTO);
+
+            response.add(coinInfoDTO);
+        }
+        return response;
     }
 
     public DetailedCoinInfoDTO getCoinByTicker(String email, String ticker) throws CoinErrorResponse {
