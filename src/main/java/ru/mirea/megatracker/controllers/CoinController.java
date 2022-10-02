@@ -4,13 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
 import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
 import ru.mirea.megatracker.services.CoinService;
 import ru.mirea.megatracker.services.NoteService;
 import ru.mirea.megatracker.util.CoinErrorResponse;
+import ru.mirea.megatracker.util.Filter;
 import ru.mirea.megatracker.util.UserErrorResponse;
 import ru.mirea.megatracker.util.UserNotAuthenticatedException;
 
@@ -39,12 +39,18 @@ public class CoinController {
 
 
     @GetMapping()
-    public ResponseEntity<?> getCoins(@RequestParam(value = "f", required = false) String filters, @RequestParam int page,
+    public ResponseEntity<?> getCoins(@RequestParam(value = "minPrice", required = false) float minPrice,
+                                      @RequestParam(value = "maxPrice", required = false) float maxPrice,
+                                      @RequestParam(value = "minCap", required = false) long minCap,
+                                      @RequestParam(value = "maxCap", required = false) long maxCap,
+                                      @RequestParam(value = "isIncreased", required = false) boolean isIncreased,
+                                      @RequestParam int page,
                                       @RequestParam int pageSize) {
         Map<Object, Object> response = new HashMap<>();
         int pageCount = (3255 / pageSize) + 1;
         response.put("pageCount", pageCount);
-        response.put("coins", coinService.getTopList(null, page, pageSize));
+        Filter filter = new Filter(minPrice, maxPrice, minCap, maxCap, isIncreased);
+        response.put("coins", coinService.getTopList(filter , page, pageSize));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
