@@ -19,4 +19,85 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="1.0.1" author="Artem Kovalenko">
+        <createTable tableName="refreshtoken">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="user_id" type="int" >
+                <constraints nullable="false" foreignKeyName="refreshToken" references="users(id)"/>
+            </column>
+
+            <column name="token" type="varchar(60)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="expiry_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.2" author="Artem Kovalenko">
+        <dropTable tableName="refreshtoken"/>
+    </changeSet>
+
+    <changeSet id="1.0.3" author="Artem Kovalenko">
+        <createTable tableName="refreshtoken">
+
+            <column name="user_id" type="int" >
+                <constraints nullable="false" foreignKeyName="refreshToken" references="users(id)" primaryKey="true"/>
+            </column>
+
+            <column name="token" type="varchar(60)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="expiry_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.4" author="Artem Kovalenko">
+        <dropTable tableName="refreshtoken"/>
+    </changeSet>
+
+    <changeSet id="1.0.5" author="Artem Kovalenko">
+        <createTable tableName="refreshtoken">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="user_id" type="int" >
+                <constraints nullable="false" foreignKeyName="refreshToken" references="users(id)"/>
+            </column>
+
+            <column name="token" type="varchar(60)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="expiry_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.6" author="Artem Kovalenko">
+        <createTable tableName="notes">
+            <column name="ticker" type="varchar(6)">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="user_id" type="int" >
+                <constraints nullable="false" foreignKeyName="note" references="users(id)"/>
+            </column>
+
+            <column name="note" type="varchar(100)"/>
+
+            <column name="is_favorite" type="boolean"/>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

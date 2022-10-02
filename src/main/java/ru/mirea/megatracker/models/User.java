@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -25,6 +26,9 @@ public class User {
     @Size(min = 4, message = "Password must contain more than 4 characters!")
     @NotEmpty(message = "Password cannot be empty!")
     private String password;
+
+    @OneToMany(mappedBy="user")
+    private Set<Note> note;
 
     public User(String email, String password) {
         this.email = email;

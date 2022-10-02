@@ -1,4 +1,4 @@
-package ru.mirea.megatracker.dto;
+package ru.mirea.megatracker.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,6 +29,7 @@ public class SignUpUserDTO {
     public SignUpUserDTO() {
 
     }
+
 
     public SignUpUserDTO(String email, String password, String repeatedPassword) {
         this.email = email;
