@@ -44,13 +44,16 @@ public class CoinService {
         this.apiKeyHeader = "Apikey {" + apiKey + "}";
     }
 
-    public List<CoinInfoDTO> getTopList(int page, int pageSize) throws CoinErrorResponse {
+    public Map<Object, Object> getTopList(int page, int pageSize) throws CoinErrorResponse {
         TopListApiResponse topListApiResponse = webClient.get()
                 .uri(String.format("top/totalvolfull?limit=%d&tsym=USD&page=%d", pageSize, page - 1))
                 .header(apiKeyHeader)
                 .retrieve().bodyToMono(TopListApiResponse.class).block();
 
-        List<CoinInfoDTO> response = new ArrayList<>(pageSize);
+        Map<Object, Object> response = new HashMap<>();
+        response.put("pageCount", (3255 / pageSize) + 1);
+
+        List<CoinInfoDTO> arrayResponse = new ArrayList<>(pageSize);
 
         if (topListApiResponse != null && topListApiResponse.getMessage().equals("Success")) {
             List<Coin> coins = topListApiResponse.getData();
@@ -68,8 +71,10 @@ public class CoinService {
 
                 coinInfo.convertToDTO(coinInfoDTO);
 
-                response.add(coinInfoDTO);
+                arrayResponse.add(coinInfoDTO);
             }
+            response.put("coins", arrayResponse);
+
             return response;
         } else {
             throw new CoinErrorResponse("External API error");
