@@ -45,12 +45,15 @@ public class CoinController {
                                       @RequestParam(value = "isIncreased", required = false) Optional<Boolean> isIncreased,
                                       @RequestParam int page,
                                       @RequestParam int pageSize) {
-        Filter filter = new Filter();
-        minPrice.ifPresent(filter::setMinPrice);
-        maxPrice.ifPresent(filter::setMaxPrice);
-        isIncreased.ifPresent(filter::setIncreased);
+        if (minPrice.isPresent() || maxPrice.isPresent() || isIncreased.isPresent()) {
+            Filter filter = new Filter();
+            minPrice.ifPresent(filter::setMinPrice);
+            maxPrice.ifPresent(filter::setMaxPrice);
+            isIncreased.ifPresent(filter::setIncreased);
+            return new ResponseEntity<>(coinService.getTopList(filter , page, pageSize), HttpStatus.OK);
+        }
 
-        return new ResponseEntity<>(coinService.getTopList(filter , page, pageSize), HttpStatus.OK);
+        return new ResponseEntity<>(coinService.getTopList(page, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("/{ticker}")
