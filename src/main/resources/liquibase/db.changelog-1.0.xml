@@ -128,4 +128,11 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="1.0.8" author="Artem Kovalenko">
+        <modifyDataType
+                columnName="ticker"
+                newDataType="varchar(10)"
+                tableName="coins"/>
+    </changeSet>
+
 </databaseChangeLog>
