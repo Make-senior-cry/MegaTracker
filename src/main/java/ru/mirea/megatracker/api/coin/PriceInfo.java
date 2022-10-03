@@ -52,6 +52,7 @@ public abstract class PriceInfo {
 
     public void convertToDTO(DetailedCoinInfoDTO detailedCoinInfoDTO){
         detailedCoinInfoDTO.setCurrentPrice(currentPrice.floatValue());
+        detailedCoinInfoDTO.setDeltaPrice(deltaPrice.setScale(6, RoundingMode.HALF_UP).floatValue());
         if (Math.abs(deltaPrice.setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().floatValue()) < 0.0000001) {
             detailedCoinInfoDTO.setDeltaPricePercent(0);
         }
