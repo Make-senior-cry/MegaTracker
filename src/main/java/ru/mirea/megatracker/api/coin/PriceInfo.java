@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
+import ru.mirea.megatracker.models.Coin;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -63,5 +64,15 @@ public abstract class PriceInfo {
         detailedCoinInfoDTO.setMarketCap(marketCap);
         detailedCoinInfoDTO.setHighDayPrice(highDay.stripTrailingZeros().floatValue());
         detailedCoinInfoDTO.setLowDayPrice(lowDay.stripTrailingZeros().floatValue());
+    }
+
+    public void convertToModel(Coin coin) {
+        coin.setCurrentPrice(currentPrice.floatValue());
+        coin.setDeltaPrice(deltaPrice.floatValue());
+        coin.setDeltaPricePercent(deltaPricePercent.floatValue());
+        coin.setDeltaPricePercent(deltaPricePercent.floatValue());
+        coin.setMarketCap(marketCap);
+        coin.setHighDayPrice(highDay.stripTrailingZeros().floatValue());
+        coin.setLowDayPrice(lowDay.stripTrailingZeros().floatValue());
     }
 }
