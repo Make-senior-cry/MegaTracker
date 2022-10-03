@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import ru.mirea.megatracker.api.coin.Coin;
+import ru.mirea.megatracker.api.coin.ApiCoin;
 import ru.mirea.megatracker.api.coin.CoinHistoryPrice;
 import ru.mirea.megatracker.api.coin.CoinInfo;
 import ru.mirea.megatracker.api.coin.CoinPriceData;
@@ -56,17 +56,17 @@ public class CoinService {
         List<CoinInfoDTO> arrayResponse = new ArrayList<>(pageSize);
 
         if (topListApiResponse != null && topListApiResponse.getMessage().equals("Success")) {
-            List<Coin> coins = topListApiResponse.getData();
+            List<ApiCoin> apiCoins = topListApiResponse.getData();
             CoinPriceData coinPriceData;
             CoinInfo coinInfo;
 
-            for (Coin coin : coins) {
+            for (ApiCoin apiCoin : apiCoins) {
                 CoinInfoDTO coinInfoDTO = new CoinInfoDTO();
-                coinPriceData = coin.getCoinPriceData();
+                coinPriceData = apiCoin.getCoinPriceData();
                 if (coinPriceData != null) {
                     coinPriceData.getPriceInfoUSD().convertToDTO(coinInfoDTO);
                 }
-                coinInfo = coin.getCoinInfo();
+                coinInfo = apiCoin.getCoinInfo();
 
 
                 coinInfo.convertToDTO(coinInfoDTO);
@@ -83,7 +83,7 @@ public class CoinService {
 
 
     public Map<Object, Object> getTopList(Filter filter, int page, int pageSize) {
-        List<Coin> postFilter = new ArrayList<>();
+        List<ApiCoin> postFilter = new ArrayList<>();
 
         for (int i = 0; i < 66; i++) {
             TopListApiResponse topListApiResponse = webClient.get()
@@ -93,13 +93,13 @@ public class CoinService {
             if (topListApiResponse == null || !topListApiResponse.getMessage().equals("Success")) {
                 throw new CoinErrorResponse("Filters error");
             }
-            List<Coin> coins = topListApiResponse.getData();
-            for (Coin coin : coins) {
-                if (coin.getCoinPriceData() == null) {
+            List<ApiCoin> apiCoins = topListApiResponse.getData();
+            for (ApiCoin apiCoin : apiCoins) {
+                if (apiCoin.getCoinPriceData() == null) {
                     continue;
                 }
-                if (filter.isOkPrice(coin)) {
-                    postFilter.add(coin);
+                if (filter.isOkPrice(apiCoin)) {
+                    postFilter.add(apiCoin);
                 }
             }
 
@@ -108,13 +108,13 @@ public class CoinService {
         List<CoinInfoDTO> arrayResponse = new ArrayList<>();
 
         for (int i = (page - 1) * pageSize; i < postFilter.size(); i++) {
-            Coin currentFilteredCoin = postFilter.get(i);
+            ApiCoin currentFilteredApiCoin = postFilter.get(i);
             CoinInfoDTO coinInfoDTO = new CoinInfoDTO();
-            CoinPriceData coinPriceData = currentFilteredCoin.getCoinPriceData();
+            CoinPriceData coinPriceData = currentFilteredApiCoin.getCoinPriceData();
             if (coinPriceData != null) {
                 coinPriceData.getPriceInfoUSD().convertToDTO(coinInfoDTO);
             }
-            CoinInfo coinInfo = currentFilteredCoin.getCoinInfo();
+            CoinInfo coinInfo = currentFilteredApiCoin.getCoinInfo();
 
             coinInfo.convertToDTO(coinInfoDTO);
 

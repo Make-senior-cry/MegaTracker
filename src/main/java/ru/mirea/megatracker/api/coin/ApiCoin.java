@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Coin {
+public class ApiCoin {
 
     @JsonProperty(value = "RAW")
     private CoinPriceData coinPriceData;
