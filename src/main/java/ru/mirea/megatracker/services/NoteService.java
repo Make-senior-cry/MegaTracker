@@ -20,7 +20,7 @@ public class NoteService {
         this.usersRepository = usersRepository;
     }
 
-    public void addNoteForCoin(String email, String ticker, String newNote) {
+    public void setNoteForCoin(String email, String ticker, String newNote) {
         Optional<User> user = usersRepository.findByEmail(email);
         Optional<Note> existingNote = notesRepository.findByTicker(ticker);
 

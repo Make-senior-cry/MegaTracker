@@ -74,11 +74,11 @@ public class CoinController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{ticker}/note")
-    public ResponseEntity<?> addNote(@PathVariable String ticker, HttpServletRequest request,
+    @PostMapping("/{ticker}/set-note")
+    public ResponseEntity<?> setNote(@PathVariable String ticker, HttpServletRequest request,
                                      @RequestBody Map<String, String> requestBody) {
         String token = request.getHeader("Authorization").substring(7);
-        noteService.addNoteForCoin(jwtUtil.getUsernameFromJwtToken(token), ticker, requestBody.get("note"));
+        noteService.setNoteForCoin(jwtUtil.getUsernameFromJwtToken(token), ticker, requestBody.get("note"));
         return ResponseEntity.ok("Note added successfully!");
     }
 
