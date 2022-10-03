@@ -68,14 +68,9 @@ public abstract class PriceInfo {
 
     public void convertToModel(Coin coin) {
         coin.setCurrentPrice(currentPrice.floatValue());
-        coin.setDeltaPrice(deltaPrice.setScale(6, RoundingMode.HALF_UP).floatValue());
-        if (Math.abs(deltaPrice.setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().floatValue()) < 0.0000001) {
-            coin.setDeltaPricePercent(0);
-        }
-        else {
-            coin.setDeltaPricePercent(deltaPricePercent.setScale(2, RoundingMode.HALF_UP).floatValue());
-        }
-        coin.setDeltaPricePercent(deltaPricePercent.setScale(2, RoundingMode.HALF_UP).floatValue());
+        coin.setDeltaPrice(deltaPrice.floatValue());
+        coin.setDeltaPricePercent(deltaPricePercent.floatValue());
+        coin.setDeltaPricePercent(deltaPricePercent.floatValue());
         coin.setMarketCap(marketCap);
         coin.setHighDayPrice(highDay.stripTrailingZeros().floatValue());
         coin.setLowDayPrice(lowDay.stripTrailingZeros().floatValue());
