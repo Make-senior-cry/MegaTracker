@@ -135,4 +135,112 @@
                 tableName="coins"/>
     </changeSet>
 
+    <changeSet id="1.0.9" author="Artem Kovalenko">
+        <dropTable tableName="coins"/>
+    </changeSet>
+
+    <changeSet id="1.1.0" author="Artem Kovalenko">
+        <createTable tableName="coins">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="ticker" type="varchar(10)" >
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar" >
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="icon_url" type="varchar" >
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="current_price" type="float" />
+
+            <column name="delta_price" type="float" />
+
+            <column name="delta_price_percent" type="float" />
+
+            <column name="high_day_price" type="float" />
+
+            <column name="low_day_price" type="float" />
+
+            <column name="market_cap" type="bigint" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.1.1" author="Artem Kovalenko">
+        <dropTable tableName="coins"/>
+    </changeSet>
+
+    <changeSet id="1.1.2" author="Artem Kovalenko">
+        <createTable tableName="coins">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="ticker" type="varchar(10)" >
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="name" type="varchar" >
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="icon_url" type="varchar" >
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="current_price" type="float" />
+
+            <column name="delta_price" type="float" />
+
+            <column name="delta_price_percent" type="float" />
+
+            <column name="high_day_price" type="float" />
+
+            <column name="low_day_price" type="float" />
+
+            <column name="market_cap" type="bigint" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.1.3" author="Artem Kovalenko">
+        <dropTable tableName="coins"/>
+    </changeSet>
+
+    <changeSet id="1.1.4" author="Artem Kovalenko">
+        <createTable tableName="coins">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="ticker" type="varchar(10)" >
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="name" type="varchar" >
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="icon_url" type="varchar" >
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="current_price" type="float" />
+
+            <column name="delta_price" type="float" />
+
+            <column name="delta_price_percent" type="float" />
+
+            <column name="high_day_price" type="float" />
+
+            <column name="low_day_price" type="float" />
+
+            <column name="market_cap" type="bigint" />
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

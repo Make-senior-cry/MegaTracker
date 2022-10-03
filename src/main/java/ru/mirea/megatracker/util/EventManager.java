@@ -45,10 +45,23 @@ public class EventManager {
                 if (apiCoin.getCoinPriceData() == null) {
                     continue;
                 }
-                Coin coin = new Coin();
-                apiCoin.getCoinInfo().convertToModel(coin);
-                apiCoin.getCoinPriceData().getPriceInfoUSD().convertToModel(coin);
-                coinsRepository.save(coin);
+                Coin receivedCoin = new Coin();
+                apiCoin.getCoinInfo().convertToModel(receivedCoin);
+                apiCoin.getCoinPriceData().getPriceInfoUSD().convertToModel(receivedCoin);
+                if (coinsRepository.existsByTicker(receivedCoin.getTicker())) {
+                    Coin coin = coinsRepository.findByTicker(receivedCoin.getTicker());
+                    coin.setCurrentPrice(receivedCoin.getCurrentPrice());
+                    coin.setDeltaPrice(receivedCoin.getDeltaPrice());
+                    coin.setDeltaPricePercent(receivedCoin.getDeltaPricePercent());
+                    coin.setHighDayPrice(receivedCoin.getHighDayPrice());
+                    coin.setLowDayPrice(receivedCoin.getLowDayPrice());
+                    coin.setMarketCap(receivedCoin.getMarketCap());
+                    coinsRepository.save(coin);
+                }
+                else {
+                    coinsRepository.save(receivedCoin);
+
+                }
             }
         }
     }
