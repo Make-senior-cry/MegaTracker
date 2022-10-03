@@ -30,7 +30,7 @@ public class EventManager {
         this.coinsRepository = coinsRepository;
     }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 300000)
     public void manage() {
         for (int i = 0; i < 37; i++) {
             TopListApiResponse topListApiResponse = webClient.get()
