@@ -149,7 +149,13 @@ public class CoinService {
         Optional<Note> note = notesRepository.findByUserAndTicker(user.get(), ticker);
 
         if (note.isPresent()) {
-            response.setNote(note.get().getNote());
+            if (note.get().getNote() == null) {
+                response.setNote("");
+            }
+            else {
+                response.setNote(note.get().getNote());
+            }
+
             response.setFavorite(note.get().isFavorite());
         }
         return response;
