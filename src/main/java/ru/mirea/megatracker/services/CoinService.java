@@ -121,19 +121,9 @@ public class CoinService {
     }*/
 
     public DetailedCoinInfoDTO getCoinByTicker(String email, String ticker) throws CoinErrorResponse {
-        ExchangePairApiResponse exchangePairApiResponse = webClient.get()
-                .uri(String.format("/top/exchanges/full?fsym=%s&tsym=USD&limit=1", ticker))
-                .header(apiKeyHeader)
-                .retrieve()
-                .bodyToMono(ExchangePairApiResponse.class)
-                .block();
         DetailedCoinInfoDTO response = new DetailedCoinInfoDTO();
-
-        if (exchangePairApiResponse == null || !exchangePairApiResponse.getMessage().equals("Success")) {
-            throw new CoinErrorResponse("External API error 1");
-        }
-        exchangePairApiResponse.getData().getCoinInfo().convertToDTO(response);
-        exchangePairApiResponse.getData().getPriceInfoUSD().convertToDTO(response);
+        Coin coin = coinsRepository.findByTicker(ticker);
+        coin.convertToDTO(response);
 
         Optional<User> user = usersRepository.findByEmail(email);
         Optional<Note> note = notesRepository.findByUserAndTicker(user.get(), ticker);
