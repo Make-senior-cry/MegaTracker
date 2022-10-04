@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -28,7 +29,7 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy="user")
-    private Set<Note> note;
+    private List<Note> note;
 
     public User(String email, String password) {
         this.email = email;
