@@ -22,11 +22,16 @@ public class NoteService {
 
     public void setNoteForCoin(String email, String ticker, String newNote) {
         Optional<User> user = usersRepository.findByEmail(email);
-        Optional<Note> existingNote = notesRepository.findByTicker(ticker);
+        Optional<Note> existingNote = notesRepository.findByUserAndTicker(user.get(), ticker);
 
         if (existingNote.isPresent()) {
-            existingNote.get().setNote(newNote);
-            notesRepository.save(existingNote.get());
+            if (newNote.equals("") && !existingNote.get().isFavorite()) {
+                notesRepository.delete(existingNote.get());
+            }
+            else {
+                existingNote.get().setNote(newNote);
+                notesRepository.save(existingNote.get());
+            }
         }
         else {
             Note note = new Note();
@@ -39,17 +44,23 @@ public class NoteService {
 
     public void setFavoriteForCoin(String email, String ticker, boolean isFavorite) {
         Optional<User> user = usersRepository.findByEmail(email);
-        Optional<Note> existingNote = notesRepository.findByTicker(ticker);
+        Optional<Note> existingNote = notesRepository.findByUserAndTicker(user.get(), ticker);
 
         if (existingNote.isPresent()) {
-            existingNote.get().setFavorite(isFavorite);
-            notesRepository.save(existingNote.get());
+            if (!isFavorite && existingNote.get().getNote().equals("")) {
+                notesRepository.delete(existingNote.get());
+            }
+            else {
+                existingNote.get().setFavorite(isFavorite);
+                notesRepository.save(existingNote.get());
+            }
         }
         else {
             Note note = new Note();
             note.setTicker(ticker);
             note.setUser(user.get());
             note.setFavorite(isFavorite);
+            note.setNote("");
             notesRepository.save(note);
         }
     }
