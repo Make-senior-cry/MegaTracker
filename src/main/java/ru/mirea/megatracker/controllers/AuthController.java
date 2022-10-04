@@ -23,6 +23,7 @@ import ru.mirea.megatracker.services.AuthService;
 import ru.mirea.megatracker.services.RefreshTokenService;
 import ru.mirea.megatracker.util.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -119,6 +120,14 @@ public class AuthController {
     public ResponseEntity<?> logOut(@RequestBody Map<String, String> request) {
         authService.logOut(request.get("refreshToken"));
         return ResponseEntity.ok(new UserErrorResponse("User logged out successfully!"));
+    }
+
+    @PostMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@RequestBody String oldPassword, @RequestBody String newPassword,
+                                            @RequestBody String newPasswordRepeat, HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
+        authService.updatePassword(oldPassword, newPassword, newPasswordRepeat, token);
+        return ResponseEntity.ok("Password changed successfully!");
     }
 
 
