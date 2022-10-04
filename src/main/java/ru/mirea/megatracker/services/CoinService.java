@@ -14,8 +14,10 @@ import ru.mirea.megatracker.api.response.TopListApiResponse;
 import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
 import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
+import ru.mirea.megatracker.models.Coin;
 import ru.mirea.megatracker.models.Note;
 import ru.mirea.megatracker.models.User;
+import ru.mirea.megatracker.repositories.CoinsRepository;
 import ru.mirea.megatracker.repositories.NotesRepository;
 import ru.mirea.megatracker.repositories.UsersRepository;
 import ru.mirea.megatracker.util.CoinErrorResponse;
@@ -35,54 +37,42 @@ public class CoinService {
     private final String apiKeyHeader;
     private final UsersRepository usersRepository;
     private final NotesRepository notesRepository;
+    private final CoinsRepository coinsRepository;
 
     @Autowired
-    public CoinService(WebClient webClient, UsersRepository usersRepository, NotesRepository notesRepository) {
+    public CoinService(WebClient webClient, UsersRepository usersRepository, NotesRepository notesRepository, CoinsRepository coinsRepository) {
         this.webClient = webClient;
         this.usersRepository = usersRepository;
         this.notesRepository = notesRepository;
+        this.coinsRepository = coinsRepository;
         this.apiKeyHeader = "Apikey {" + apiKey + "}";
     }
 
     public Map<Object, Object> getTopList(int page, int pageSize) throws CoinErrorResponse {
-        TopListApiResponse topListApiResponse = webClient.get()
-                .uri(String.format("top/totalvolfull?limit=%d&tsym=USD&page=%d", pageSize, page - 1))
-                .header(apiKeyHeader)
-                .retrieve().bodyToMono(TopListApiResponse.class).block();
-
         Map<Object, Object> response = new HashMap<>();
-        response.put("pageCount", (3255 / pageSize) + 1);
+        response.put("pageCount", (coinsRepository.count() / pageSize));
 
         List<CoinInfoDTO> arrayResponse = new ArrayList<>(pageSize);
+        for (int i = (page * pageSize) - pageSize + 1; i < (page * pageSize) + 1; i++) {
+            Optional<Coin> coin;
+            coin = coinsRepository.findById(i);
 
-        if (topListApiResponse != null && topListApiResponse.getMessage().equals("Success")) {
-            List<ApiCoin> apiCoins = topListApiResponse.getData();
-            CoinPriceData coinPriceData;
-            CoinInfo coinInfo;
-
-            for (ApiCoin apiCoin : apiCoins) {
+            if (coin.isPresent()) {
                 CoinInfoDTO coinInfoDTO = new CoinInfoDTO();
-                coinPriceData = apiCoin.getCoinPriceData();
-                if (coinPriceData != null) {
-                    coinPriceData.getPriceInfoUSD().convertToDTO(coinInfoDTO);
-                }
-                coinInfo = apiCoin.getCoinInfo();
-
-
-                coinInfo.convertToDTO(coinInfoDTO);
-
+                coin.get().convertToDTO(coinInfoDTO);
                 arrayResponse.add(coinInfoDTO);
             }
-            response.put("coins", arrayResponse);
-
-            return response;
-        } else {
-            throw new CoinErrorResponse("External API error");
+            else {
+                break;
+            }
         }
+        response.put("coins", arrayResponse);
+
+        return response;
     }
 
 
-    public Map<Object, Object> getTopList(Filter filter, int page, int pageSize) {
+    /*public Map<Object, Object> getTopList(Filter filter, int page, int pageSize) {
         List<ApiCoin> postFilter = new ArrayList<>();
 
         for (int i = 0; i < 66; i++) {
@@ -128,7 +118,7 @@ public class CoinService {
         response.put("coins", arrayResponse);
 
         return response;
-    }
+    }*/
 
     public DetailedCoinInfoDTO getCoinByTicker(String email, String ticker) throws CoinErrorResponse {
         ExchangePairApiResponse exchangePairApiResponse = webClient.get()
