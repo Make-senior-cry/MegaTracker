@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
 
 import javax.persistence.*;
 
@@ -46,4 +47,13 @@ public class Coin {
 
     @Column(name = "market_cap")
     private long marketCap;
+
+    public void convertToDTO(CoinInfoDTO coinInfoDTO) {
+        coinInfoDTO.setName(name);
+        coinInfoDTO.setTicker(ticker);
+        coinInfoDTO.setIconUrl(iconUrl);
+        coinInfoDTO.setCurrentPrice(currentPrice);
+        coinInfoDTO.setDeltaPrice(deltaPrice);
+        coinInfoDTO.setDeltaPricePercent(deltaPricePercent);
+    }
 }
