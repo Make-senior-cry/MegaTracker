@@ -4,8 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Entity
 @Table(name = "coins")
@@ -46,4 +49,22 @@ public class Coin {
 
     @Column(name = "market_cap")
     private long marketCap;
+
+    public void convertToDTO(CoinInfoDTO coinInfoDTO) {
+        BigDecimal transfer;
+
+        coinInfoDTO.setName(name);
+        coinInfoDTO.setTicker(ticker);
+        coinInfoDTO.setIconUrl(iconUrl);
+        coinInfoDTO.setCurrentPrice(currentPrice);
+        transfer = new BigDecimal(deltaPrice);
+        coinInfoDTO.setDeltaPrice(transfer.setScale(6, RoundingMode.HALF_UP).floatValue());
+        transfer = new BigDecimal(deltaPricePercent);
+        if (Math.abs(transfer.setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().floatValue()) < 0.0000001) {
+            coinInfoDTO.setDeltaPricePercent(0);
+        }
+        else {
+            coinInfoDTO.setDeltaPricePercent(transfer.setScale(2, RoundingMode.HALF_UP).floatValue());
+        }
+    }
 }
