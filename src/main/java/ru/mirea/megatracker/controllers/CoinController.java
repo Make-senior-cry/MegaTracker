@@ -63,15 +63,9 @@ public class CoinController {
                 ticker), HttpStatus.OK);
     }
 
-
     @GetMapping("/{ticker}/history")
     public ResponseEntity<?> getHistoryByTicker(@PathVariable String ticker){
         return new ResponseEntity<List<CoinPriceHistoryDTO>>(coinService.getPriceHistoryByTicker(ticker), HttpStatus.OK);
-    }
-
-    @GetMapping("/favorite")
-    public ResponseEntity<?> getFavorite(){
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{ticker}/set-note")
