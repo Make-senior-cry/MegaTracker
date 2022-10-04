@@ -13,6 +13,10 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Note {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
+
     @Column(name = "ticker")
     private String ticker;
 

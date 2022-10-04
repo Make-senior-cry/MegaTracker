@@ -10,12 +10,10 @@ import ru.mirea.megatracker.security.jwt.JwtUtil;
 import ru.mirea.megatracker.services.CoinService;
 import ru.mirea.megatracker.services.NoteService;
 import ru.mirea.megatracker.util.CoinErrorResponse;
-import ru.mirea.megatracker.util.Filter;
 import ru.mirea.megatracker.util.UserErrorResponse;
 import ru.mirea.megatracker.util.UserNotAuthenticatedException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -82,6 +80,14 @@ public class CoinController {
         String token = request.getHeader("Authorization").substring(7);
         noteService.setFavoriteForCoin(jwtUtil.getUsernameFromJwtToken(token), ticker, requestBody.get("isFavorite"));
         return ResponseEntity.ok("Coin condition successfully updated!");
+    }
+
+    @GetMapping("/favorite")
+    public ResponseEntity<?> getFavoriteCoins(HttpServletRequest headers, @RequestParam int page,
+                                              @RequestParam int pageSize) {
+        String token = headers.getHeader("Authorization").substring(7);
+        return new ResponseEntity<>(coinService.getFavoriteCoins(page, pageSize,
+                jwtUtil.getUsernameFromJwtToken(token)), HttpStatus.OK);
     }
 
 

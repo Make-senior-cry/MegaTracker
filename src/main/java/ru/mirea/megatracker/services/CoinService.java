@@ -4,13 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import ru.mirea.megatracker.api.coin.ApiCoin;
 import ru.mirea.megatracker.api.coin.CoinHistoryPrice;
-import ru.mirea.megatracker.api.coin.CoinInfo;
-import ru.mirea.megatracker.api.coin.CoinPriceData;
-import ru.mirea.megatracker.api.response.ExchangePairApiResponse;
 import ru.mirea.megatracker.api.response.HistoryApiResponse;
-import ru.mirea.megatracker.api.response.TopListApiResponse;
 import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
 import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
@@ -21,7 +16,6 @@ import ru.mirea.megatracker.repositories.CoinsRepository;
 import ru.mirea.megatracker.repositories.NotesRepository;
 import ru.mirea.megatracker.repositories.UsersRepository;
 import ru.mirea.megatracker.util.CoinErrorResponse;
-import ru.mirea.megatracker.util.Filter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -129,13 +123,7 @@ public class CoinService {
         Optional<Note> note = notesRepository.findByUserAndTicker(user.get(), ticker);
 
         if (note.isPresent()) {
-            if (note.get().getNote() == null) {
-                response.setNote("");
-            }
-            else {
-                response.setNote(note.get().getNote());
-            }
-
+            response.setNote(note.get().getNote());
             response.setFavorite(note.get().isFavorite());
         }
         return response;
@@ -167,5 +155,35 @@ public class CoinService {
             response.add(coinPriceHistoryDTO);
         }
         return response;
+    }
+
+    public Map<Object, Object> getFavoriteCoins(int page, int pageSize, String email) {
+        Map<Object, Object> request = new HashMap<>();
+
+        Optional<User> user = usersRepository.findByEmail(email);
+        List<Note> notes;
+        List<Coin> favoriteCoins = new ArrayList<>();
+        List<CoinInfoDTO> coins = new ArrayList<>();
+
+        if (user.isPresent()) {
+            notes = notesRepository.findAllByUserId(user.get().getId());
+            for (int i = 0; i < notes.size(); i++) {
+                favoriteCoins.add(coinsRepository.findByTicker(notes.get(i).getTicker()));
+
+            }
+            request.put("pageCount", (favoriteCoins.size() / pageSize) + 1);
+            for (int i = (page * pageSize) - pageSize; i < page * pageSize; i++) {
+                CoinInfoDTO coinInfoDTO = new CoinInfoDTO();
+                if (i < favoriteCoins.size()) {
+                    favoriteCoins.get(i).convertToDTO(coinInfoDTO);
+                    coins.add(coinInfoDTO);
+                }
+                else {
+                    break;
+                }
+            }
+        }
+        request.put("coins", coins);
+        return request;
     }
 }
