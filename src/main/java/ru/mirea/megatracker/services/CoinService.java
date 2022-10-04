@@ -9,6 +9,7 @@ import ru.mirea.megatracker.api.response.HistoryApiResponse;
 import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
 import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
+import ru.mirea.megatracker.dto.coin.FavoriteCoinDTO;
 import ru.mirea.megatracker.models.Coin;
 import ru.mirea.megatracker.models.Note;
 import ru.mirea.megatracker.models.User;
@@ -163,20 +164,23 @@ public class CoinService {
         Optional<User> user = usersRepository.findByEmail(email);
         List<Note> notes;
         List<Coin> favoriteCoins = new ArrayList<>();
-        List<CoinInfoDTO> coins = new ArrayList<>();
+        List<FavoriteCoinDTO> coins = new ArrayList<>();
 
         if (user.isPresent()) {
             notes = notesRepository.findAllByUserId(user.get().getId());
             for (int i = 0; i < notes.size(); i++) {
                 favoriteCoins.add(coinsRepository.findByTicker(notes.get(i).getTicker()));
-
             }
-            request.put("pageCount", (favoriteCoins.size() / pageSize) + 1);
+
+            request.put("pageCount", ((favoriteCoins.size() - 1) / pageSize) + 1);
+
             for (int i = (page * pageSize) - pageSize; i < page * pageSize; i++) {
-                CoinInfoDTO coinInfoDTO = new CoinInfoDTO();
+                FavoriteCoinDTO favoriteCoinDTO = new FavoriteCoinDTO();
                 if (i < favoriteCoins.size()) {
-                    favoriteCoins.get(i).convertToDTO(coinInfoDTO);
-                    coins.add(coinInfoDTO);
+                    favoriteCoins.get(i).convertToDTO(favoriteCoinDTO);
+                    favoriteCoinDTO.setFavorite(notesRepository.findByUserAndTicker(user.get(),
+                            favoriteCoinDTO.getTicker()).get().isFavorite());
+                    coins.add(favoriteCoinDTO);
                 }
                 else {
                     break;
