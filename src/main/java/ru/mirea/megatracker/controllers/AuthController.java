@@ -123,13 +123,13 @@ public class AuthController {
     }
 
     @PostMapping("/update-password")
-    public ResponseEntity<?> updatePassword(@RequestBody String oldPassword, @RequestBody String newPassword,
-                                            @RequestBody String newPasswordRepeat, HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
-        authService.updatePassword(oldPassword, newPassword, newPasswordRepeat, token);
+    public ResponseEntity<?> updatePassword(@RequestBody Map<String, String> request, HttpServletRequest headers) {
+        System.out.println(request);
+        String token = headers.getHeader("Authorization").substring(7);
+        authService.updatePassword(request.get("oldPassword"), request.get("newPassword"),
+                request.get("newPasswordRepeat"), token);
         return ResponseEntity.ok("Password changed successfully!");
     }
-
 
     private void confirmPassword(String password, String repeatedPassword) {
         if (!password.equals(repeatedPassword)) {

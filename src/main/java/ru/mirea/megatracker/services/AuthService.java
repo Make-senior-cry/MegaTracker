@@ -19,7 +19,6 @@ public class AuthService {
     private final UsersRepository usersRepository;
     private final RefreshTokensRepository refreshTokensRepository;
     private final PasswordEncoder passwordEncoder;
-
     private final JwtUtil jwtUtil;
 
     @Autowired
@@ -61,14 +60,17 @@ public class AuthService {
 
     @Transactional
     public void updatePassword(String oldPassword, String newPassword, String newPasswordRepeat, String token) {
-        String passwordToChange = passwordEncoder.encode(usersRepository
-                .findPasswordByEmail(jwtUtil.getUsernameFromJwtToken(token)));
-        if (newPassword.equals(newPasswordRepeat) && oldPassword.equals(passwordToChange)) {
-            Optional<User> user = usersRepository.findByEmail(jwtUtil.generateTokenFromUsername(token));
-            user.get().setPassword(passwordEncoder.encode(newPassword));
-        }
-        else {
-            throw new UnconfirmedPasswordException("Password does not match");
+        Optional<User> user = usersRepository.findByEmail(jwtUtil.getUsernameFromJwtToken(token));
+
+        if (user.isPresent()) {
+            String passwordToChange = user.get().getPassword();
+            if (newPassword.equals(newPasswordRepeat) && passwordEncoder.matches(oldPassword, passwordToChange)) {
+                user.get().setPassword(passwordEncoder.encode(newPassword));
+                usersRepository.save(user.get());
+            }
+            else {
+                throw new UnconfirmedPasswordException("Password does not match");
+            }
         }
     }
 }
