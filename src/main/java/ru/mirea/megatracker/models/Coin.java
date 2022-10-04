@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
+import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -66,5 +67,25 @@ public class Coin {
         else {
             coinInfoDTO.setDeltaPricePercent(transfer.setScale(2, RoundingMode.HALF_UP).floatValue());
         }
+    }
+
+    public void convertToDTO(DetailedCoinInfoDTO detailedCoinInfoDTO) {
+        BigDecimal transfer;
+
+        detailedCoinInfoDTO.setName(name);
+        detailedCoinInfoDTO.setTicker(ticker);
+        detailedCoinInfoDTO.setCurrentPrice(currentPrice);
+        transfer = new BigDecimal(deltaPrice);
+        detailedCoinInfoDTO.setDeltaPrice(transfer.setScale(6, RoundingMode.HALF_UP).floatValue());
+        transfer = new BigDecimal(deltaPricePercent);
+        if (Math.abs(transfer.setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().floatValue()) < 0.0000001) {
+            detailedCoinInfoDTO.setDeltaPricePercent(0);
+        }
+        else {
+            detailedCoinInfoDTO.setDeltaPricePercent(transfer.setScale(2, RoundingMode.HALF_UP).floatValue());
+        }
+        detailedCoinInfoDTO.setMarketCap(marketCap);
+        detailedCoinInfoDTO.setHighDayPrice(highDayPrice);
+        detailedCoinInfoDTO.setLowDayPrice(lowDayPrice);
     }
 }
