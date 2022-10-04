@@ -75,6 +75,7 @@ public class Coin {
         detailedCoinInfoDTO.setName(name);
         detailedCoinInfoDTO.setTicker(ticker);
         detailedCoinInfoDTO.setCurrentPrice(currentPrice);
+        detailedCoinInfoDTO.setNote("");
         transfer = new BigDecimal(deltaPrice);
         detailedCoinInfoDTO.setDeltaPrice(transfer.setScale(6, RoundingMode.HALF_UP).floatValue());
         transfer = new BigDecimal(deltaPricePercent);
