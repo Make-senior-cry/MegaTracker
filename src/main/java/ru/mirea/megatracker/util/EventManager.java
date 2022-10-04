@@ -60,7 +60,6 @@ public class EventManager {
                 }
                 else {
                     coinsRepository.save(receivedCoin);
-
                 }
             }
         }

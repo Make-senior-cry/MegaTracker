@@ -23,6 +23,7 @@ import ru.mirea.megatracker.services.AuthService;
 import ru.mirea.megatracker.services.RefreshTokenService;
 import ru.mirea.megatracker.util.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +72,7 @@ public class AuthController {
         User user = signUpUserDTO.toUser();
         authService.register(user);
 
-        return ResponseEntity.ok(new UserErrorResponse("User registered successfully!"));
+        return ResponseEntity.ok("User registered successfully!");
     }
 
     @PostMapping("/sign-in")
@@ -118,9 +119,17 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logOut(@RequestBody Map<String, String> request) {
         authService.logOut(request.get("refreshToken"));
-        return ResponseEntity.ok(new UserErrorResponse("User logged out successfully!"));
+        return ResponseEntity.ok("User logged out successfully!");
     }
 
+    @PostMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@RequestBody Map<String, String> request, HttpServletRequest headers) {
+        System.out.println(request);
+        String token = headers.getHeader("Authorization").substring(7);
+        authService.updatePassword(request.get("oldPassword"), request.get("newPassword"),
+                request.get("newPasswordRepeat"), token);
+        return ResponseEntity.ok("Password changed successfully!");
+    }
 
     private void confirmPassword(String password, String repeatedPassword) {
         if (!password.equals(repeatedPassword)) {
