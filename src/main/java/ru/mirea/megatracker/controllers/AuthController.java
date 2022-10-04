@@ -72,7 +72,7 @@ public class AuthController {
         User user = signUpUserDTO.toUser();
         authService.register(user);
 
-        return ResponseEntity.ok(new UserErrorResponse("User registered successfully!"));
+        return ResponseEntity.ok("User registered successfully!");
     }
 
     @PostMapping("/sign-in")
@@ -119,7 +119,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logOut(@RequestBody Map<String, String> request) {
         authService.logOut(request.get("refreshToken"));
-        return ResponseEntity.ok(new UserErrorResponse("User logged out successfully!"));
+        return ResponseEntity.ok("User logged out successfully!");
     }
 
     @PostMapping("/update-password")
