@@ -43,23 +43,23 @@ public class CoinService {
         this.apiKeyHeader = "Apikey {" + apiKey + "}";
     }
 
-    public Map<Object, Object> getTopList(int page, int pageSize) throws CoinErrorResponse {
+    public Map<Object, Object> getTopList(int page, int pageSize, float minPrice, float maxPrice, boolean isIncreased) throws CoinErrorResponse {
         Map<Object, Object> response = new HashMap<>();
-        response.put("pageCount", (coinsRepository.count() / pageSize));
+        List<Coin> coins;
+        if (isIncreased) {
+            coins = coinsRepository.findAllIncreasedWithFilters(minPrice, maxPrice);
+        } else {
+            coins = coinsRepository.findAllWithFilters(minPrice, maxPrice);
+        }
 
+        System.out.println(coins.size());
+        response.put("pageCount", (coins.size() / pageSize) + 1);
         List<CoinInfoDTO> arrayResponse = new ArrayList<>(pageSize);
-        for (int i = (page * pageSize) - pageSize + 1; i < (page * pageSize) + 1; i++) {
-            Optional<Coin> coin;
-            coin = coinsRepository.findById(i);
-
-            if (coin.isPresent()) {
-                CoinInfoDTO coinInfoDTO = new CoinInfoDTO();
-                coin.get().convertToDTO(coinInfoDTO);
-                arrayResponse.add(coinInfoDTO);
-            }
-            else {
-                break;
-            }
+        for (int i = (page - 1) * pageSize; i < page * pageSize; i++) {
+            if (i > coins.size() - 1) break;
+            CoinInfoDTO coinInfoDTO = new CoinInfoDTO();
+            coins.get(i).convertToDTO(coinInfoDTO);
+            arrayResponse.add(coinInfoDTO);
         }
         response.put("coins", arrayResponse);
 
@@ -181,8 +181,7 @@ public class CoinService {
                     favoriteCoinDTO.setFavorite(notesRepository.findByUserAndTicker(user.get(),
                             favoriteCoinDTO.getTicker()).get().isFavorite());
                     coins.add(favoriteCoinDTO);
-                }
-                else {
+                } else {
                     break;
                 }
             }
