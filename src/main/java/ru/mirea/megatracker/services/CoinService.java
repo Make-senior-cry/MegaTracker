@@ -52,7 +52,6 @@ public class CoinService {
             coins = coinsRepository.findAllWithFilters(minPrice, maxPrice);
         }
 
-        System.out.println(coins.size());
         response.put("pageCount", ((coins.size() - 1) / pageSize) + 1);
         List<CoinInfoDTO> arrayResponse = new ArrayList<>(pageSize);
         for (int i = (page - 1) * pageSize; i < page * pageSize; i++) {
