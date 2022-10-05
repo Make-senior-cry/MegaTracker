@@ -43,17 +43,17 @@ public class CoinService {
         this.apiKeyHeader = "Apikey {" + apiKey + "}";
     }
 
-    public Map<Object, Object> getTopList(int page, int pageSize, float minPrice, float maxPrice, boolean isIncreased) throws CoinErrorResponse {
+    public Map<Object, Object> getTopList(int page, int pageSize, float minPrice, float maxPrice, boolean isRising) throws CoinErrorResponse {
         Map<Object, Object> response = new HashMap<>();
         List<Coin> coins;
-        if (isIncreased) {
-            coins = coinsRepository.findAllIncreasedWithFilters(minPrice, maxPrice);
+        if (isRising) {
+            coins = coinsRepository.findAllRisingWithFilters(minPrice, maxPrice);
         } else {
             coins = coinsRepository.findAllWithFilters(minPrice, maxPrice);
         }
 
         System.out.println(coins.size());
-        response.put("pageCount", (coins.size() / pageSize) + 1);
+        response.put("pageCount", ((coins.size() - 1) / pageSize) + 1);
         List<CoinInfoDTO> arrayResponse = new ArrayList<>(pageSize);
         for (int i = (page - 1) * pageSize; i < page * pageSize; i++) {
             if (i > coins.size() - 1) break;

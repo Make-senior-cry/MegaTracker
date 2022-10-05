@@ -39,12 +39,12 @@ public class CoinController {
     @GetMapping()
     public ResponseEntity<?> getCoins(@RequestParam(value = "minPrice") float minPrice,
                                       @RequestParam(value = "maxPrice") float maxPrice,
-                                      @RequestParam(value = "isIncreased") boolean isIncreased,
+                                      @RequestParam(value = "isRising") boolean isRising,
                                       @RequestParam int page,
                                       @RequestParam int pageSize) {
-        if(maxPrice == -1) maxPrice = Float.MAX_VALUE;
+        if(maxPrice == 0) maxPrice = Float.MAX_VALUE;
 
-        return new ResponseEntity<>(coinService.getTopList(page, pageSize, minPrice, maxPrice, isIncreased), HttpStatus.OK);
+        return new ResponseEntity<>(coinService.getTopList(page, pageSize, minPrice, maxPrice, isRising), HttpStatus.OK);
     }
 
     @GetMapping("/{ticker}")
