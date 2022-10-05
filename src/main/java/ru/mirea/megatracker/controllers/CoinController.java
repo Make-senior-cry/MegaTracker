@@ -35,28 +35,27 @@ public class CoinController {
     }
 
 
-
     @GetMapping()
     public ResponseEntity<?> getCoins(@RequestParam(value = "minPrice") float minPrice,
                                       @RequestParam(value = "maxPrice") float maxPrice,
                                       @RequestParam(value = "isRising") boolean isRising,
-                                      @RequestParam int page,
-                                      @RequestParam int pageSize,
-                                      @RequestParam String search) {
-        if(maxPrice == 0) maxPrice = Float.MAX_VALUE;
+                                      @RequestParam(value = "page") int page,
+                                      @RequestParam(value = "pageSize") int pageSize,
+                                      @RequestParam(value = "search") String search) {
+        if (maxPrice == 0) maxPrice = Float.MAX_VALUE;
 
         return new ResponseEntity<>(coinService.getTopList(page, pageSize, minPrice, maxPrice, isRising, search), HttpStatus.OK);
     }
 
     @GetMapping("/{ticker}")
-    public ResponseEntity<?> getCoinByTicker(@PathVariable String ticker, HttpServletRequest request){
+    public ResponseEntity<?> getCoinByTicker(@PathVariable String ticker, HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7);
         return new ResponseEntity<DetailedCoinInfoDTO>(coinService.getCoinByTicker(jwtUtil.getUsernameFromJwtToken(token),
                 ticker), HttpStatus.OK);
     }
 
     @GetMapping("/{ticker}/history")
-    public ResponseEntity<?> getHistoryByTicker(@PathVariable String ticker){
+    public ResponseEntity<?> getHistoryByTicker(@PathVariable String ticker) {
         return new ResponseEntity<List<CoinPriceHistoryDTO>>(coinService.getPriceHistoryByTicker(ticker), HttpStatus.OK);
     }
 
@@ -77,7 +76,8 @@ public class CoinController {
     }
 
     @GetMapping("/favorite")
-    public ResponseEntity<?> getFavoriteCoins(HttpServletRequest headers, @RequestParam int page,
+    public ResponseEntity<?> getFavoriteCoins(HttpServletRequest headers,
+                                              @RequestParam int page,
                                               @RequestParam int pageSize) {
         String token = headers.getHeader("Authorization").substring(7);
         return new ResponseEntity<>(coinService.getFavoriteCoins(page, pageSize,
@@ -86,7 +86,7 @@ public class CoinController {
 
 
     @ExceptionHandler
-    private ResponseEntity<CoinErrorResponse> handleException(CoinErrorResponse exception){
+    private ResponseEntity<CoinErrorResponse> handleException(CoinErrorResponse exception) {
         CoinErrorResponse response = new CoinErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
