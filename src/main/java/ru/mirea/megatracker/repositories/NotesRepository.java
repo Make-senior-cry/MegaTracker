@@ -13,5 +13,5 @@ import java.util.Optional;
 public interface NotesRepository extends JpaRepository<Note, Integer> {
     Optional<Note> findByTicker(String ticker);
     Optional<Note> findByUserAndTicker(User user, String ticker);
-    List<Note> findAllByUserId(int userId);
+    List<Note> findAllByUserAndIsFavorite(User user, boolean isFavorite);
 }
