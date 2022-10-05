@@ -16,7 +16,6 @@ import ru.mirea.megatracker.util.UserNotAuthenticatedException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
@@ -38,20 +37,14 @@ public class CoinController {
 
 
     @GetMapping()
-    public ResponseEntity<?> getCoins(@RequestParam(value = "minPrice", required = false) Optional<Float> minPrice,
-                                      @RequestParam(value = "maxPrice", required = false) Optional<Float> maxPrice,
-                                      @RequestParam(value = "isIncreased", required = false) Optional<Boolean> isIncreased,
+    public ResponseEntity<?> getCoins(@RequestParam(value = "minPrice") float minPrice,
+                                      @RequestParam(value = "maxPrice") float maxPrice,
+                                      @RequestParam(value = "isRising") boolean isRising,
                                       @RequestParam int page,
                                       @RequestParam int pageSize) {
-        /*if (minPrice.isPresent() || maxPrice.isPresent() || isIncreased.isPresent()) {
-            Filter filter = new Filter();
-            minPrice.ifPresent(filter::setMinPrice);
-            maxPrice.ifPresent(filter::setMaxPrice);
-            isIncreased.ifPresent(filter::setIncreased);
-            return new ResponseEntity<>(coinService.getTopList(filter , page, pageSize), HttpStatus.OK);
-        }*/
+        if(maxPrice == 0) maxPrice = Float.MAX_VALUE;
 
-        return new ResponseEntity<>(coinService.getTopList(page, pageSize), HttpStatus.OK);
+        return new ResponseEntity<>(coinService.getTopList(page, pageSize, minPrice, maxPrice, isRising), HttpStatus.OK);
     }
 
     @GetMapping("/{ticker}")
