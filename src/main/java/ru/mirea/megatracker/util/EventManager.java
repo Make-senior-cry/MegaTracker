@@ -34,7 +34,7 @@ public class EventManager {
     public void manage() {
         for (int i = 0; i < 37; i++) {
             TopListApiResponse topListApiResponse = webClient.get()
-                    .uri(String.format("top/totalvolfull?limit=%d&tsym=USD&page=%d", 90, i))
+                    .uri(String.format("top/totalvolfull?limit=%d&tsym=USD&page=%d", 88, i))
                     .header(apiKeyHeader)
                     .retrieve().bodyToMono(TopListApiResponse.class).block();
             if (topListApiResponse == null || !topListApiResponse.getMessage().equals("Success")) {
