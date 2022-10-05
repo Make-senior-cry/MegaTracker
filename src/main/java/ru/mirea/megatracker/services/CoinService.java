@@ -166,12 +166,13 @@ public class CoinService {
         List<FavoriteCoinDTO> coins = new ArrayList<>();
 
         if (user.isPresent()) {
-            notes = notesRepository.findAllByUserId(user.get().getId());
+            notes = notesRepository.findAllByUserAndIsFavorite(user.get(), true);
             for (int i = 0; i < notes.size(); i++) {
                 favoriteCoins.add(coinsRepository.findByTicker(notes.get(i).getTicker()));
             }
 
             request.put("pageCount", ((favoriteCoins.size() - 1) / pageSize) + 1);
+            Collections.reverse(favoriteCoins);
 
             for (int i = (page * pageSize) - pageSize; i < page * pageSize; i++) {
                 FavoriteCoinDTO favoriteCoinDTO = new FavoriteCoinDTO();
