@@ -19,4 +19,6 @@ public interface CoinsRepository extends JpaRepository<Coin, Integer> {
             "order by c.id")
     List<Coin> findAllRisingWithFilters(@Param("minPrice") float minPrice,
                                         @Param("maxPrice") float maxPrice);
+
+    List<Coin> findByNameStartingWithIgnoreCaseOrTickerStartingWithIgnoreCase(String beginningOfName, String beginningOfTicker);
 }

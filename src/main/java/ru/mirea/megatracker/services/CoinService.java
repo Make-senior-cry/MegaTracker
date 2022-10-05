@@ -21,6 +21,7 @@ import ru.mirea.megatracker.util.CoinErrorResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CoinService {
@@ -43,13 +44,28 @@ public class CoinService {
         this.apiKeyHeader = "Apikey {" + apiKey + "}";
     }
 
-    public Map<Object, Object> getTopList(int page, int pageSize, float minPrice, float maxPrice, boolean isRising) throws CoinErrorResponse {
+    public Map<Object, Object> getTopList(int page, int pageSize, float minPrice, float maxPrice
+            , boolean isRising, String search) throws CoinErrorResponse {
         Map<Object, Object> response = new HashMap<>();
+        List<Coin> filteredCoins;
+        List<Coin> searchedCoins = new ArrayList<>();
         List<Coin> coins;
+        if (!search.equals("")) {
+            searchedCoins = coinsRepository.findByNameStartingWithIgnoreCaseOrTickerStartingWithIgnoreCase(search, search);
+        }
+
         if (isRising) {
-            coins = coinsRepository.findAllRisingWithFilters(minPrice, maxPrice);
-        } else {
-            coins = coinsRepository.findAllWithFilters(minPrice, maxPrice);
+            filteredCoins = coinsRepository.findAllRisingWithFilters(minPrice, maxPrice);
+        }
+        else {
+            filteredCoins = coinsRepository.findAllWithFilters(minPrice, maxPrice);
+        }
+
+        if (!searchedCoins.isEmpty()) {
+            coins = filteredCoins.stream().filter(searchedCoins::contains).collect(Collectors.toList());
+        }
+        else {
+            coins = filteredCoins;
         }
 
         response.put("pageCount", ((coins.size() - 1) / pageSize) + 1);
@@ -64,55 +80,6 @@ public class CoinService {
 
         return response;
     }
-
-
-    /*public Map<Object, Object> getTopList(Filter filter, int page, int pageSize) {
-        List<ApiCoin> postFilter = new ArrayList<>();
-
-        for (int i = 0; i < 66; i++) {
-            TopListApiResponse topListApiResponse = webClient.get()
-                    .uri(String.format("top/totalvolfull?limit=%d&tsym=USD&page=%d", 50, i))
-                    .header(apiKeyHeader)
-                    .retrieve().bodyToMono(TopListApiResponse.class).block();
-            if (topListApiResponse == null || !topListApiResponse.getMessage().equals("Success")) {
-                throw new CoinErrorResponse("Filters error");
-            }
-            List<ApiCoin> apiCoins = topListApiResponse.getData();
-            for (ApiCoin apiCoin : apiCoins) {
-                if (apiCoin.getCoinPriceData() == null) {
-                    continue;
-                }
-                if (filter.isOkPrice(apiCoin)) {
-                    postFilter.add(apiCoin);
-                }
-            }
-
-        }
-        Map<Object, Object> response = new HashMap<>();
-        List<CoinInfoDTO> arrayResponse = new ArrayList<>();
-
-        for (int i = (page - 1) * pageSize; i < postFilter.size(); i++) {
-            ApiCoin currentFilteredApiCoin = postFilter.get(i);
-            CoinInfoDTO coinInfoDTO = new CoinInfoDTO();
-            CoinPriceData coinPriceData = currentFilteredApiCoin.getCoinPriceData();
-            if (coinPriceData != null) {
-                coinPriceData.getPriceInfoUSD().convertToDTO(coinInfoDTO);
-            }
-            CoinInfo coinInfo = currentFilteredApiCoin.getCoinInfo();
-
-            coinInfo.convertToDTO(coinInfoDTO);
-
-            arrayResponse.add(coinInfoDTO);
-
-            if (arrayResponse.size() == pageSize) {
-                break;
-            }
-        }
-        response.put("pageCount", (postFilter.size() / pageSize) + 1);
-        response.put("coins", arrayResponse);
-
-        return response;
-    }*/
 
     public DetailedCoinInfoDTO getCoinByTicker(String email, String ticker) throws CoinErrorResponse {
         DetailedCoinInfoDTO response = new DetailedCoinInfoDTO();
