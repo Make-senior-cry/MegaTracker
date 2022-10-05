@@ -21,6 +21,7 @@ import ru.mirea.megatracker.util.CoinErrorResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CoinService {
@@ -43,13 +44,28 @@ public class CoinService {
         this.apiKeyHeader = "Apikey {" + apiKey + "}";
     }
 
-    public Map<Object, Object> getTopList(int page, int pageSize, float minPrice, float maxPrice, boolean isRising) throws CoinErrorResponse {
+    public Map<Object, Object> getTopList(int page, int pageSize, float minPrice, float maxPrice
+            , boolean isRising, String search) throws CoinErrorResponse {
         Map<Object, Object> response = new HashMap<>();
+        List<Coin> filteredCoins;
+        List<Coin> searchedCoins = new ArrayList<>();
         List<Coin> coins;
+        if (!search.equals("")) {
+            searchedCoins = coinsRepository.findByNameStartingWithIgnoreCaseOrTickerStartingWithIgnoreCase(search, search);
+        }
+
         if (isRising) {
-            coins = coinsRepository.findAllRisingWithFilters(minPrice, maxPrice);
-        } else {
-            coins = coinsRepository.findAllWithFilters(minPrice, maxPrice);
+            filteredCoins = coinsRepository.findAllRisingWithFilters(minPrice, maxPrice);
+        }
+        else {
+            filteredCoins = coinsRepository.findAllWithFilters(minPrice, maxPrice);
+        }
+
+        if (!searchedCoins.isEmpty()) {
+            coins = filteredCoins.stream().filter(searchedCoins::contains).collect(Collectors.toList());
+        }
+        else {
+            coins = filteredCoins;
         }
 
         response.put("pageCount", ((coins.size() - 1) / pageSize) + 1);
