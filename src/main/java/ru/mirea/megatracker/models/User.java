@@ -1,6 +1,7 @@
 package ru.mirea.megatracker.models;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Table(name = "users")
 @Setter
 @Getter
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,13 +30,11 @@ public class User {
     @NotEmpty(message = "Password cannot be empty!")
     private String password;
 
-    @OneToMany(mappedBy="user")
+    @OneToMany(mappedBy = "user")
     private List<Note> note;
 
     public User(String email, String password) {
         this.email = email;
         this.password = password;
     }
-
-    public User() {}
 }

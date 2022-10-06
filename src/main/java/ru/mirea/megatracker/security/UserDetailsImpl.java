@@ -1,6 +1,7 @@
 package ru.mirea.megatracker.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,17 +13,12 @@ import java.util.Objects;
 
 @Setter
 @Getter
+@AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
     private int id;
     private String email;
     @JsonIgnore
     private String password;
-
-    public UserDetailsImpl(int id, String email, String password) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-    }
 
     public static UserDetailsImpl build(User user) {
         return new UserDetailsImpl(

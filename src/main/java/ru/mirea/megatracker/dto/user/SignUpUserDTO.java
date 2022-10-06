@@ -2,7 +2,9 @@ package ru.mirea.megatracker.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.mirea.megatracker.models.User;
 
@@ -12,12 +14,14 @@ import javax.validation.constraints.Size;
 
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SignUpUserDTO {
     @Email(message = "Email should be valid!")
     private String email;
 
-    @Size(min = 4, message = "Password must contain more than 4 characters!")
+    @Size(min = 8, message = "Password must contain more than 8 characters!")
     @NotEmpty(message = "Password cannot be empty!")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -25,17 +29,6 @@ public class SignUpUserDTO {
     @NotEmpty(message = "Please repeat your password!")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String repeatedPassword;
-
-    public SignUpUserDTO() {
-
-    }
-
-
-    public SignUpUserDTO(String email, String password, String repeatedPassword) {
-        this.email = email;
-        this.password = password;
-        this.repeatedPassword = repeatedPassword;
-    }
 
     public User toUser() {
         User user = new User();

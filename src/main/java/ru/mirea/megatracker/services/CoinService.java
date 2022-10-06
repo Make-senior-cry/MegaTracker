@@ -3,6 +3,7 @@ package ru.mirea.megatracker.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.mirea.megatracker.api.coin.CoinHistoryPrice;
 import ru.mirea.megatracker.api.response.HistoryApiResponse;
@@ -24,6 +25,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class CoinService {
     private final WebClient webClient;
 
@@ -51,20 +53,18 @@ public class CoinService {
         List<Coin> searchedCoins = new ArrayList<>();
         List<Coin> coins;
         if (!search.equals("")) {
-            searchedCoins = coinsRepository.findByNameStartingWithIgnoreCaseOrTickerStartingWithIgnoreCase(search, search);
+            searchedCoins = coinsRepository.findAllBySearch(search, search);
         }
 
         if (isRising) {
             filteredCoins = coinsRepository.findAllRisingWithFilters(minPrice, maxPrice);
-        }
-        else {
+        } else {
             filteredCoins = coinsRepository.findAllWithFilters(minPrice, maxPrice);
         }
 
         if (!searchedCoins.isEmpty()) {
             coins = filteredCoins.stream().filter(searchedCoins::contains).collect(Collectors.toList());
-        }
-        else {
+        } else {
             coins = filteredCoins;
         }
 

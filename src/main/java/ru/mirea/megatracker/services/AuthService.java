@@ -39,10 +39,6 @@ public class AuthService {
         return usersRepository.existsByEmail(email);
     }
 
-    public Optional<User> findByEmail(String email) {
-        return usersRepository.findByEmail(email);
-    }
-
     @Transactional
     public void checkRefreshToken(String email) {
         Optional<User> verifiableUser = usersRepository.findByEmail(email);

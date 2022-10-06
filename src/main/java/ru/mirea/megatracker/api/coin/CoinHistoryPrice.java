@@ -26,17 +26,17 @@ public class CoinHistoryPrice {
     private BigDecimal closingPrice;
 
     public void setTime(long time) {
-        this.time = time*1000L;
+        this.time = time * 1000L;
     }
 
 
-    private String convertUnixDateToString(long unixDate){
-        Date realDate = new Date(unixDate*1000L);
+    private String convertUnixDateToString(long unixDate) {
+        Date realDate = new Date(unixDate * 1000L);
         SimpleDateFormat res = new SimpleDateFormat("dd/MM/yyyy");
         return res.format(realDate);
     }
 
-    public void convertToDto(CoinPriceHistoryDTO dto, float deltaPrice){
+    public void convertToDto(CoinPriceHistoryDTO dto, float deltaPrice) {
         dto.setClosingPrice(closingPrice.floatValue());
         dto.setDateTime(time);
         dto.setDeltaClosingPrice(deltaPrice);

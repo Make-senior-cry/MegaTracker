@@ -44,20 +44,18 @@ public abstract class PriceInfo {
                 .stripTrailingZeros().floatValue());
         if (Math.abs(deltaPrice.setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().floatValue()) < 0.0000001) {
             coinInfoDTO.setDeltaPricePercent(0);
-        }
-        else {
+        } else {
             coinInfoDTO.setDeltaPricePercent(deltaPricePercent.setScale(2, RoundingMode.HALF_UP).floatValue());
         }
 
     }
 
-    public void convertToDTO(DetailedCoinInfoDTO detailedCoinInfoDTO){
+    public void convertToDTO(DetailedCoinInfoDTO detailedCoinInfoDTO) {
         detailedCoinInfoDTO.setCurrentPrice(currentPrice.floatValue());
         detailedCoinInfoDTO.setDeltaPrice(deltaPrice.setScale(6, RoundingMode.HALF_UP).floatValue());
         if (Math.abs(deltaPrice.setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().floatValue()) < 0.0000001) {
             detailedCoinInfoDTO.setDeltaPricePercent(0);
-        }
-        else {
+        } else {
             detailedCoinInfoDTO.setDeltaPricePercent(deltaPricePercent.setScale(2, RoundingMode.HALF_UP).floatValue());
         }
         detailedCoinInfoDTO.setDeltaPricePercent(deltaPricePercent.setScale(2, RoundingMode.HALF_UP).floatValue());

@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional(readOnly = true)
 public class RefreshTokenService {
     @Value("${jwtRefresh.token.expired}")
     private Long refreshTokenDuration;
@@ -31,6 +32,7 @@ public class RefreshTokenService {
         return refreshTokensRepository.findByToken(token);
     }
 
+    @Transactional
     public RefreshToken createRefreshToken(int userId) {
         RefreshToken refreshToken = new RefreshToken();
 
@@ -42,6 +44,7 @@ public class RefreshTokenService {
         return refreshToken;
     }
 
+    @Transactional
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
             refreshTokensRepository.delete(token);

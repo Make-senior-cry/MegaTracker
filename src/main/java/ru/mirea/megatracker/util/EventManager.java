@@ -57,8 +57,7 @@ public class EventManager {
                     coin.setLowDayPrice(receivedCoin.getLowDayPrice());
                     coin.setMarketCap(receivedCoin.getMarketCap());
                     coinsRepository.save(coin);
-                }
-                else {
+                } else {
                     coinsRepository.save(receivedCoin);
                 }
             }

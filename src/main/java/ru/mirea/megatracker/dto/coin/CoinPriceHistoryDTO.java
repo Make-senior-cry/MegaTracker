@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 public class CoinPriceHistoryDTO {
     private float closingPrice;
+
     private float deltaClosingPrice;
+
     private long dateTime;
 }
