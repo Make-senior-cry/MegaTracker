@@ -12,5 +12,7 @@ public class CoinPriceHistoryDTO {
 
     private float deltaClosingPrice;
 
+    private float deltaClosingPricePercent;
+
     private long dateTime;
 }

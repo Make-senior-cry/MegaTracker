@@ -9,6 +9,7 @@ import lombok.Setter;
 import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -40,6 +41,9 @@ public class CoinHistoryPrice {
         dto.setClosingPrice(closingPrice.floatValue());
         dto.setDateTime(time);
         dto.setDeltaClosingPrice(deltaPrice);
+        dto.setDeltaClosingPricePercent(new BigDecimal(deltaPrice/closingPrice.floatValue()*100)
+                .setScale(closingPrice.scale(), RoundingMode.HALF_UP)
+                .floatValue());
     }
 
     @Override
