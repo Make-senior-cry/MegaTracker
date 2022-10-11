@@ -53,7 +53,7 @@ public class CoinService {
         List<Coin> searchedCoins = new ArrayList<>();
         List<Coin> coins;
         if (!search.equals("")) {
-            searchedCoins = coinsRepository.findAllBySearch(search, search);
+            searchedCoins = coinsRepository.findAllBySearch(search.toLowerCase(), search.toLowerCase());
         }
 
         if (isRising) {
