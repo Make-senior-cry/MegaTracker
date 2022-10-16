@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
+import ru.mirea.megatracker.interfaces.ICoinAPIService;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
 import ru.mirea.megatracker.services.CoinService;
 import ru.mirea.megatracker.services.NoteService;
@@ -22,13 +23,13 @@ import java.util.Map;
 @RequestMapping("/coins")
 public class CoinController {
 
-    private final CoinService coinService;
+    private final ICoinAPIService coinService;
     private final NoteService noteService;
     private final JwtUtil jwtUtil;
 
 
     @Autowired
-    public CoinController(CoinService coinService, NoteService noteService, JwtUtil jwtUtil) {
+    public CoinController(ICoinAPIService coinService, NoteService noteService, JwtUtil jwtUtil) {
         this.coinService = coinService;
         this.noteService = noteService;
         this.jwtUtil = jwtUtil;
