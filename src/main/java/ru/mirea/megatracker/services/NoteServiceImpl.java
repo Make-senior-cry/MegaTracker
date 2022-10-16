@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.mirea.megatracker.exceptions.NoteNotFoundException;
+import ru.mirea.megatracker.exceptions.UserNotFoundException;
 import ru.mirea.megatracker.models.Note;
 import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.repositories.NotesRepository;
@@ -25,46 +27,58 @@ public class NoteServiceImpl implements ru.mirea.megatracker.interfaces.NoteServ
 
     @Transactional
     @Override
-    public void setNoteForCoin(String email, String ticker, String newNote) {
-        Optional<User> user = usersRepository.findByEmail(email);
-        Optional<Note> existingNote = notesRepository.findByUserAndTicker(user.get(), ticker);
+    public void setNoteForCoin(String email, String ticker, String noteText) {
+        Optional<User> maybeUser = usersRepository.findByEmail(email);
+        if (maybeUser.isEmpty()) throw new UserNotFoundException();
+        User user = maybeUser.get();
 
-        if (existingNote.isPresent()) {
-            if (newNote.equals("") && !existingNote.get().isFavorite()) {
-                notesRepository.delete(existingNote.get());
-            } else {
-                existingNote.get().setNote(newNote);
-                notesRepository.save(existingNote.get());
-            }
+        Optional<Note> maybeExistingNote = notesRepository.findByUserAndTicker(user, ticker);
+
+        if (maybeExistingNote.isEmpty()) {
+            createNewNoteForCoin(user, ticker, false, noteText);
+            return;
+        }
+
+        Note existingNote = maybeExistingNote.get();
+        boolean noteIsEmpty = noteText.equals("") && !existingNote.isFavorite();
+        if (noteIsEmpty) {
+            notesRepository.delete(existingNote);
         } else {
-            Note note = new Note();
-            note.setUser(user.get());
-            note.setNote(newNote);
-            note.setTicker(ticker);
-            notesRepository.save(note);
+            existingNote.setNote(noteText);
+            notesRepository.save(existingNote);
         }
     }
 
     @Transactional
     @Override
     public void setFavoriteForCoin(String email, String ticker, boolean isFavorite) {
-        Optional<User> user = usersRepository.findByEmail(email);
-        Optional<Note> existingNote = notesRepository.findByUserAndTicker(user.get(), ticker);
+        Optional<User> maybeUser = usersRepository.findByEmail(email);
+        if (maybeUser.isEmpty()) throw new UserNotFoundException();
+        User user = maybeUser.get();
 
-        if (existingNote.isPresent()) {
-            if (!isFavorite && existingNote.get().getNote().equals("")) {
-                notesRepository.delete(existingNote.get());
-            } else {
-                existingNote.get().setFavorite(isFavorite);
-                notesRepository.save(existingNote.get());
-            }
-        } else {
-            Note note = new Note();
-            note.setTicker(ticker);
-            note.setUser(user.get());
-            note.setFavorite(isFavorite);
-            note.setNote("");
-            notesRepository.save(note);
+        Optional<Note> maybeExistingNote = notesRepository.findByUserAndTicker(user, ticker);
+
+        if (maybeExistingNote.isEmpty()) {
+            createNewNoteForCoin(user, ticker, isFavorite, "");
+            return;
         }
+
+        Note existingNote = maybeExistingNote.get();
+        boolean noteIsEmpty = !isFavorite && existingNote.getNote().equals("");
+        if (noteIsEmpty) {
+            notesRepository.delete(existingNote);
+        } else {
+            existingNote.setFavorite(isFavorite);
+            notesRepository.save(existingNote);
+        }
+    }
+
+    private void createNewNoteForCoin(User user, String ticker, boolean isFavorite, String noteText) {
+        Note note = new Note();
+        note.setTicker(ticker);
+        note.setUser(user);
+        note.setFavorite(isFavorite);
+        note.setNote(noteText);
+        notesRepository.save(note);
     }
 }
