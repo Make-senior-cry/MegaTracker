@@ -12,6 +12,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.mirea.megatracker.dto.user.SignInUserDTO;
 import ru.mirea.megatracker.dto.user.SignUpUserDTO;
+import ru.mirea.megatracker.interfaces.IAuthService;
 import ru.mirea.megatracker.models.RefreshToken;
 import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.payload.JwtResponse;
@@ -19,7 +20,6 @@ import ru.mirea.megatracker.payload.TokenRefreshRequest;
 import ru.mirea.megatracker.payload.TokenRefreshResponse;
 import ru.mirea.megatracker.security.UserDetailsImpl;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
-import ru.mirea.megatracker.services.AuthService;
 import ru.mirea.megatracker.services.RefreshTokenService;
 import ru.mirea.megatracker.util.*;
 
@@ -35,11 +35,11 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    private final AuthService authService;
+    private final IAuthService authService;
     private final RefreshTokenService refreshTokenService;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, AuthService authService,
+    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, IAuthService authService,
                           RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;

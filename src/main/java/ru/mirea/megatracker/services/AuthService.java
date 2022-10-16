@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import ru.mirea.megatracker.interfaces.IAuthService;
 import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.repositories.RefreshTokensRepository;
 import ru.mirea.megatracker.repositories.UsersRepository;
@@ -15,7 +17,7 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
-public class AuthService {
+public class AuthService implements IAuthService {
     private final UsersRepository usersRepository;
     private final RefreshTokensRepository refreshTokensRepository;
     private final PasswordEncoder passwordEncoder;
@@ -30,16 +32,19 @@ public class AuthService {
     }
 
     @Transactional
+    @Override
     public void register(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         usersRepository.save(user);
     }
 
+    @Override
     public boolean checkForEmailExistence(String email) {
         return usersRepository.existsByEmail(email);
     }
 
     @Transactional
+    @Override
     public void checkRefreshToken(String email) {
         Optional<User> verifiableUser = usersRepository.findByEmail(email);
         if (verifiableUser.isEmpty())
@@ -50,11 +55,13 @@ public class AuthService {
     }
 
     @Transactional
+    @Override
     public void logOut(String refreshToken) {
         refreshTokensRepository.deleteByToken(refreshToken);
     }
 
     @Transactional
+    @Override
     public void updatePassword(String oldPassword, String newPassword, String newPasswordRepeat, String token) {
         Optional<User> user = usersRepository.findByEmail(jwtUtil.getUsernameFromJwtToken(token));
 
