@@ -18,4 +18,3 @@ public interface CoinsRepository extends JpaRepository<Coin, Integer> {
     List<Coin> findAllWithFilters(@Param("minPrice") float minPrice,
                                   @Param("maxPrice") float maxPrice, @Param("minDeltaPrice") float minDeltaPrice);
 }
-//select c from Coin c where c.currentPrice >= :minPrice and c.currentPrice <= :maxPrice and (((c.deltaPrice > 0.001) and :isRising) or (not :isRising)) order by c.id
