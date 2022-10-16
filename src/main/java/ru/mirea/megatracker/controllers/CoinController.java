@@ -8,7 +8,6 @@ import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
 import ru.mirea.megatracker.interfaces.ICoinAPIService;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
-import ru.mirea.megatracker.services.CoinService;
 import ru.mirea.megatracker.services.NoteService;
 import ru.mirea.megatracker.util.CoinErrorResponse;
 import ru.mirea.megatracker.util.UserErrorResponse;
