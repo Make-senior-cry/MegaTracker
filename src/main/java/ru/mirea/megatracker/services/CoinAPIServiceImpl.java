@@ -12,7 +12,6 @@ import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
 import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
 import ru.mirea.megatracker.dto.coin.FavoriteCoinDTO;
-import ru.mirea.megatracker.interfaces.ICoinAPIService;
 import ru.mirea.megatracker.models.Coin;
 import ru.mirea.megatracker.models.Note;
 import ru.mirea.megatracker.models.User;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
-public class CoinService implements ICoinAPIService {
+public class CoinAPIServiceImpl implements ru.mirea.megatracker.interfaces.CoinAPIService {
     private final WebClient webClient;
     private final String apiKeyHeader;
     private final UsersRepository usersRepository;
@@ -38,7 +37,7 @@ public class CoinService implements ICoinAPIService {
     private String apiKey;
 
     @Autowired
-    public CoinService(WebClient webClient, UsersRepository usersRepository, NotesRepository notesRepository, CoinsRepository coinsRepository) {
+    public CoinAPIServiceImpl(WebClient webClient, UsersRepository usersRepository, NotesRepository notesRepository, CoinsRepository coinsRepository) {
         this.webClient = webClient;
         this.usersRepository = usersRepository;
         this.notesRepository = notesRepository;

@@ -2,7 +2,7 @@ package ru.mirea.megatracker.interfaces;
 
 import ru.mirea.megatracker.models.User;
 
-public interface IAuthService {
+public interface AuthService {
     public void register(User user);
     public boolean checkForEmailExistence(String email);
     public void checkRefreshToken(String email);

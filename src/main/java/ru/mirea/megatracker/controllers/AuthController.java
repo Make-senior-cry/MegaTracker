@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.mirea.megatracker.dto.user.SignInUserDTO;
 import ru.mirea.megatracker.dto.user.SignUpUserDTO;
-import ru.mirea.megatracker.interfaces.IAuthService;
-import ru.mirea.megatracker.interfaces.IRefreshTokenService;
+import ru.mirea.megatracker.interfaces.AuthService;
+import ru.mirea.megatracker.interfaces.RefreshTokenService;
 import ru.mirea.megatracker.models.RefreshToken;
 import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.payload.JwtResponse;
@@ -37,11 +37,11 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    private final IAuthService authService;
-    private final IRefreshTokenService refreshTokenService;
+    private final AuthService authService;
+    private final RefreshTokenService refreshTokenService;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, IAuthService authService, IRefreshTokenService refreshTokenService) {
+    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, AuthService authService, RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.authService = authService;

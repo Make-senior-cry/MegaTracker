@@ -6,10 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
-import ru.mirea.megatracker.interfaces.ICoinAPIService;
-import ru.mirea.megatracker.interfaces.INoteService;
+import ru.mirea.megatracker.interfaces.CoinAPIService;
+import ru.mirea.megatracker.interfaces.NoteService;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
-import ru.mirea.megatracker.services.NoteService;
 import ru.mirea.megatracker.util.CoinErrorResponse;
 import ru.mirea.megatracker.util.UserErrorResponse;
 import ru.mirea.megatracker.util.UserNotAuthenticatedException;
@@ -23,13 +22,13 @@ import java.util.Map;
 @RequestMapping("/coins")
 public class CoinController {
 
-    private final ICoinAPIService coinService;
-    private final INoteService noteService;
+    private final CoinAPIService coinService;
+    private final NoteService noteService;
     private final JwtUtil jwtUtil;
 
 
     @Autowired
-    public CoinController(ICoinAPIService coinService, INoteService noteService, JwtUtil jwtUtil) {
+    public CoinController(CoinAPIService coinService, NoteService noteService, JwtUtil jwtUtil) {
         this.coinService = coinService;
         this.noteService = noteService;
         this.jwtUtil = jwtUtil;

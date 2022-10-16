@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ru.mirea.megatracker.interfaces.IRefreshTokenService;
 import ru.mirea.megatracker.models.RefreshToken;
 import ru.mirea.megatracker.repositories.RefreshTokensRepository;
 import ru.mirea.megatracker.repositories.UsersRepository;
@@ -17,7 +16,7 @@ import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
-public class RefreshTokenService implements IRefreshTokenService {
+public class RefreshTokenServiceImpl implements ru.mirea.megatracker.interfaces.RefreshTokenService {
     @Value("${jwtRefresh.token.expired}")
     private Long refreshTokenDuration;
 
@@ -25,7 +24,7 @@ public class RefreshTokenService implements IRefreshTokenService {
     private final UsersRepository usersRepository;
 
     @Autowired
-    public RefreshTokenService(RefreshTokensRepository refreshTokensRepository, UsersRepository usersRepository) {
+    public RefreshTokenServiceImpl(RefreshTokensRepository refreshTokensRepository, UsersRepository usersRepository) {
         this.refreshTokensRepository = refreshTokensRepository;
         this.usersRepository = usersRepository;
     }

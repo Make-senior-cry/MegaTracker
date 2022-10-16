@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import ru.mirea.megatracker.models.RefreshToken;
 
-public interface IRefreshTokenService {
+public interface RefreshTokenService {
     public Optional<RefreshToken> findByToken(String token);
     public RefreshToken createRefreshToken(int userId);
     public RefreshToken verifyExpiration(RefreshToken token);

@@ -6,7 +6,7 @@ import java.util.Map;
 import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
 
-public interface ICoinAPIService {
+public interface CoinAPIService {
     public Map<String, Object> getTopList(int page, int pageSize, float minPrice, float maxPrice, boolean isRising, String search);
 
     public DetailedCoinInfoDTO getCoinByTicker(String email, String ticker);

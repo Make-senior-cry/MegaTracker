@@ -5,7 +5,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ru.mirea.megatracker.interfaces.IAuthService;
 import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.repositories.RefreshTokensRepository;
 import ru.mirea.megatracker.repositories.UsersRepository;
@@ -17,14 +16,14 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
-public class AuthService implements IAuthService {
+public class AuthServiceImpl implements ru.mirea.megatracker.interfaces.AuthService {
     private final UsersRepository usersRepository;
     private final RefreshTokensRepository refreshTokensRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
     @Autowired
-    public AuthService(UsersRepository usersRepository, RefreshTokensRepository refreshTokensRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public AuthServiceImpl(UsersRepository usersRepository, RefreshTokensRepository refreshTokensRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.usersRepository = usersRepository;
         this.refreshTokensRepository = refreshTokensRepository;
         this.passwordEncoder = passwordEncoder;
