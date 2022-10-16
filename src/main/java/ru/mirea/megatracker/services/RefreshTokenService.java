@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import ru.mirea.megatracker.interfaces.IRefreshTokenService;
 import ru.mirea.megatracker.models.RefreshToken;
 import ru.mirea.megatracker.repositories.RefreshTokensRepository;
 import ru.mirea.megatracker.repositories.UsersRepository;
@@ -15,7 +17,7 @@ import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
-public class RefreshTokenService {
+public class RefreshTokenService implements IRefreshTokenService {
     @Value("${jwtRefresh.token.expired}")
     private Long refreshTokenDuration;
 
@@ -28,11 +30,13 @@ public class RefreshTokenService {
         this.usersRepository = usersRepository;
     }
 
+    @Override
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokensRepository.findByToken(token);
     }
 
     @Transactional
+    @Override
     public RefreshToken createRefreshToken(int userId) {
         RefreshToken refreshToken = new RefreshToken();
 
@@ -45,6 +49,7 @@ public class RefreshTokenService {
     }
 
     @Transactional
+    @Override
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
             refreshTokensRepository.delete(token);
@@ -52,10 +57,5 @@ public class RefreshTokenService {
         }
 
         return token;
-    }
-
-    @Transactional
-    public int deleteByUserId(int userId) {
-        return refreshTokensRepository.deleteByUser(usersRepository.findById(userId).get());
     }
 }

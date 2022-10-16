@@ -10,9 +10,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
 import ru.mirea.megatracker.dto.user.SignInUserDTO;
 import ru.mirea.megatracker.dto.user.SignUpUserDTO;
 import ru.mirea.megatracker.interfaces.IAuthService;
+import ru.mirea.megatracker.interfaces.IRefreshTokenService;
 import ru.mirea.megatracker.models.RefreshToken;
 import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.payload.JwtResponse;
@@ -25,6 +27,7 @@ import ru.mirea.megatracker.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
 import java.util.List;
 import java.util.Map;
 
@@ -36,11 +39,10 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final IAuthService authService;
-    private final RefreshTokenService refreshTokenService;
+    private final IRefreshTokenService refreshTokenService;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, IAuthService authService,
-                          RefreshTokenService refreshTokenService) {
+    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, IAuthService authService, IRefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.authService = authService;
@@ -62,9 +64,7 @@ public class AuthController {
         }
 
         if (authService.checkForEmailExistence(signUpUserDTO.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new UserErrorResponse("Email is already in use!"));
+            return ResponseEntity.badRequest().body(new UserErrorResponse("Email is already in use!"));
         }
 
         confirmPassword(signUpUserDTO.getPassword(), signUpUserDTO.getRepeatedPassword());
@@ -106,10 +106,8 @@ public class AuthController {
     public ResponseEntity<?> refreshToken(@RequestBody @Valid TokenRefreshRequest request) {
         String requestRefreshToken = request.getRefreshToken();
 
-        return refreshTokenService.findByToken(requestRefreshToken)
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .map(user -> {
+        return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser).map(user -> {
                     String accessToken = jwtUtil.generateTokenFromUsername(user.getEmail());
                     return ResponseEntity.ok(new TokenRefreshResponse(accessToken, requestRefreshToken));
                 })
@@ -127,7 +125,7 @@ public class AuthController {
         System.out.println(request);
         String token = headers.getHeader("Authorization").substring(7);
         authService.updatePassword(request.get("oldPassword"), request.get("newPassword"),
-                request.get("newPasswordRepeat"), token);
+                                   request.get("newPasswordRepeat"), token);
         return ResponseEntity.ok("Password changed successfully!");
     }
 
