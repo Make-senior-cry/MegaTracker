@@ -10,35 +10,42 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import ru.mirea.megatracker.dto.SignInUserDTO;
-import ru.mirea.megatracker.dto.SignUpUserDTO;
+
+import ru.mirea.megatracker.dto.user.SignInUserDTO;
+import ru.mirea.megatracker.dto.user.SignUpUserDTO;
+import ru.mirea.megatracker.interfaces.AuthService;
+import ru.mirea.megatracker.interfaces.RefreshTokenService;
+import ru.mirea.megatracker.models.RefreshToken;
 import ru.mirea.megatracker.models.User;
+import ru.mirea.megatracker.payload.JwtResponse;
+import ru.mirea.megatracker.payload.TokenRefreshRequest;
+import ru.mirea.megatracker.payload.TokenRefreshResponse;
 import ru.mirea.megatracker.security.UserDetailsImpl;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
-import ru.mirea.megatracker.services.AuthService;
-import ru.mirea.megatracker.util.UnconfirmedPasswordException;
-import ru.mirea.megatracker.util.UserErrorResponse;
-import ru.mirea.megatracker.util.UserNotAuthenticatedException;
-import ru.mirea.megatracker.util.UserNotCreatedException;
+import ru.mirea.megatracker.util.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RequestMapping("/auth")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final AuthService authService;
+    private final RefreshTokenService refreshTokenService;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, AuthService authService) {
+    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, AuthService authService, RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.authService = authService;
+        this.refreshTokenService = refreshTokenService;
     }
 
 
@@ -56,9 +63,7 @@ public class AuthController {
         }
 
         if (authService.checkForEmailExistence(signUpUserDTO.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new UserErrorResponse("Email is already in use!"));
+            return ResponseEntity.badRequest().body(new UserErrorResponse("Email is already in use!"));
         }
 
         confirmPassword(signUpUserDTO.getPassword(), signUpUserDTO.getRepeatedPassword());
@@ -66,7 +71,7 @@ public class AuthController {
         User user = signUpUserDTO.toUser();
         authService.register(user);
 
-        return ResponseEntity.ok(new UserErrorResponse("User registered successfully!"));
+        return ResponseEntity.ok("User registered successfully!");
     }
 
     @PostMapping("/sign-in")
@@ -82,17 +87,45 @@ public class AuthController {
             throw new UserNotAuthenticatedException(errorMessage.toString());
         }
 
+        authService.checkRefreshToken(signInUserDTO.getEmail());
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(signInUserDTO.getEmail(), signInUserDTO.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtil.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        String accessToken = jwtUtil.generateJwtToken(userDetails);
 
-        Map<Object, Object> response = new HashMap<>();
-        response.put("token", jwt);
-        response.put("email", userDetails.getUsername());
-        return ResponseEntity.ok(response);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
+        return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken.getToken()));
+    }
+
+    @PostMapping("/refreshtoken")
+    public ResponseEntity<?> refreshToken(@RequestBody @Valid TokenRefreshRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+
+        return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser).map(user -> {
+                    String accessToken = jwtUtil.generateTokenFromUsername(user.getEmail());
+                    return ResponseEntity.ok(new TokenRefreshResponse(accessToken, requestRefreshToken));
+                })
+                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logOut(@RequestBody Map<String, String> request) {
+        authService.logOut(request.get("refreshToken"));
+        return ResponseEntity.ok("User logged out successfully!");
+    }
+
+    @PostMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@RequestBody Map<String, String> request, HttpServletRequest headers) {
+        System.out.println(request);
+        String token = headers.getHeader("Authorization").substring(7);
+        authService.updatePassword(request.get("oldPassword"), request.get("newPassword"),
+                                   request.get("newPasswordRepeat"), token);
+        return ResponseEntity.ok("Password changed successfully!");
     }
 
     private void confirmPassword(String password, String repeatedPassword) {
@@ -120,5 +153,12 @@ public class AuthController {
         UserErrorResponse response = new UserErrorResponse(exception.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<UserErrorResponse> handleException(TokenRefreshException exception) {
+        UserErrorResponse response = new UserErrorResponse(exception.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 }

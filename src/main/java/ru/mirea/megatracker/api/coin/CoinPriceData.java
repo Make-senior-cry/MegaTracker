@@ -1,4 +1,4 @@
-package ru.mirea.megatracker.API;
+package ru.mirea.megatracker.api.coin;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -16,8 +16,5 @@ import lombok.Setter;
 public class CoinPriceData {
 
     @JsonProperty(value = "USD")
-    private ;
-
-    @JsonProperty(value = "RUB")
-    private ;
+    private PriceInfoUSD priceInfoUSD;
 }
