@@ -15,7 +15,7 @@ public class UserNotFoundControllerAdvice {
     @ResponseBody
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String linkNotFoundHandler(UserNotFoundException exception) {
+    String userNotFoundHandler(UserNotFoundException exception) {
         return exception.getMessage();
     }
 }

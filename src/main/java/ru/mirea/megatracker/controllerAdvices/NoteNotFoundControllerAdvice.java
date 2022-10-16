@@ -15,7 +15,7 @@ public class NoteNotFoundControllerAdvice {
     @ResponseBody
     @ExceptionHandler(NoteNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String linkNotFoundHandler(NoteNotFoundException exception) {
+    String noteNotFoundHandler(NoteNotFoundException exception) {
         return exception.getMessage();
     }
 }
