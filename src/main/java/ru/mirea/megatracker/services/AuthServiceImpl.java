@@ -33,8 +33,7 @@ public class AuthServiceImpl implements ru.mirea.megatracker.interfaces.AuthServ
     @Transactional
     @Override
     public void register(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        usersRepository.save(user);
+        hashUserPasswordAndSave(user);
     }
 
     @Override
@@ -45,12 +44,13 @@ public class AuthServiceImpl implements ru.mirea.megatracker.interfaces.AuthServ
     @Transactional
     @Override
     public void checkRefreshToken(String email) {
-        Optional<User> verifiableUser = usersRepository.findByEmail(email);
-        if (verifiableUser.isEmpty())
-            return;
+        Optional<User> maybeUser = usersRepository.findByEmail(email);
+        if (maybeUser.isEmpty()) return;
+        User user = maybeUser.get();
 
-        if (refreshTokensRepository.existsByUser(verifiableUser.get()))
-            refreshTokensRepository.deleteByUser(verifiableUser.get());
+        if (refreshTokensRepository.existsByUser(user)) {
+            refreshTokensRepository.deleteByUser(user);
+        }
     }
 
     @Transactional
@@ -62,17 +62,23 @@ public class AuthServiceImpl implements ru.mirea.megatracker.interfaces.AuthServ
     @Transactional
     @Override
     public void updatePassword(String oldPassword, String newPassword, String newPasswordRepeat, String token) {
-        Optional<User> user = usersRepository.findByEmail(jwtUtil.getUsernameFromJwtToken(token));
+        String userEmail = jwtUtil.getUsernameFromJwtToken(token);
+        Optional<User> maybeUser = usersRepository.findByEmail(userEmail);
+        if (maybeUser.isEmpty()) return;
+        User user = maybeUser.get();
 
-        if (user.isPresent()) {
-            String passwordToChange = user.get().getPassword();
-            if (newPassword.equals(newPasswordRepeat) && passwordEncoder.matches(oldPassword, passwordToChange)) {
-                user.get().setPassword(passwordEncoder.encode(newPassword));
-                usersRepository.save(user.get());
-            }
-            else {
-                throw new UnconfirmedPasswordException("Password does not match");
-            }
+        String passwordToChange = user.getPassword();
+
+        // User cannot update the password
+        if (newPassword.equals(newPasswordRepeat) && passwordEncoder.matches(oldPassword, passwordToChange)) {
+            throw new UnconfirmedPasswordException("Password does not match");
         }
+        user.setPassword(newPassword);
+        hashUserPasswordAndSave(user);
+    }
+
+    private void hashUserPasswordAndSave(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        usersRepository.save(user);
     }
 }
