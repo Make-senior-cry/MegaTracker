@@ -13,15 +13,16 @@ import ru.mirea.megatracker.models.Coin;
 import ru.mirea.megatracker.repositories.CoinsRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class EventManager {
 
-    @Value("${api.key}")
-    private String apiKey;
     private final String apiKeyHeader;
     private final WebClient webClient;
     private final CoinsRepository coinsRepository;
+    @Value("${api.key}")
+    private String apiKey;
 
     @Autowired
     public EventManager(WebClient webClient, CoinsRepository coinsRepository) {
@@ -34,8 +35,7 @@ public class EventManager {
     public void manage() {
         for (int i = 0; i < 37; i++) {
             TopListApiResponse topListApiResponse = webClient.get()
-                    .uri(String.format("top/totalvolfull?limit=%d&tsym=USD&page=%d", 88, i))
-                    .header(apiKeyHeader)
+                    .uri(String.format("top/totalvolfull?limit=%d&tsym=USD&page=%d", 88, i)).header(apiKeyHeader)
                     .retrieve().bodyToMono(TopListApiResponse.class).block();
             if (topListApiResponse == null || !topListApiResponse.getMessage().equals("Success")) {
                 throw new CoinErrorResponse("Coins error");
@@ -48,8 +48,9 @@ public class EventManager {
                 Coin receivedCoin = new Coin();
                 apiCoin.getCoinInfo().convertToModel(receivedCoin);
                 apiCoin.getCoinPriceData().getPriceInfoUSD().convertToModel(receivedCoin);
-                if (coinsRepository.existsByTicker(receivedCoin.getTicker())) {
-                    Coin coin = coinsRepository.findByTicker(receivedCoin.getTicker());
+                Optional<Coin> maybeCoin = coinsRepository.findByTicker(receivedCoin.getTicker());
+                if (maybeCoin.isPresent()) {
+                    Coin coin = maybeCoin.get();
                     coin.setCurrentPrice(receivedCoin.getCurrentPrice());
                     coin.setDeltaPrice(receivedCoin.getDeltaPrice());
                     coin.setDeltaPricePercent(receivedCoin.getDeltaPricePercent());

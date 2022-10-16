@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.mirea.megatracker.exceptions.TokenExpiredException;
+import ru.mirea.megatracker.exceptions.UserNotFoundException;
 import ru.mirea.megatracker.models.RefreshToken;
+import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.repositories.RefreshTokensRepository;
 import ru.mirea.megatracker.repositories.UsersRepository;
-import ru.mirea.megatracker.util.TokenRefreshException;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -17,11 +19,10 @@ import java.util.UUID;
 @Service
 @Transactional(readOnly = true)
 public class RefreshTokenServiceImpl implements ru.mirea.megatracker.interfaces.RefreshTokenService {
-    @Value("${jwtRefresh.token.expired}")
-    private Long refreshTokenDuration;
-
     private final RefreshTokensRepository refreshTokensRepository;
     private final UsersRepository usersRepository;
+    @Value("${jwtRefresh.token.expired}")
+    private Long refreshTokenDuration;
 
     @Autowired
     public RefreshTokenServiceImpl(RefreshTokensRepository refreshTokensRepository, UsersRepository usersRepository) {
@@ -39,20 +40,23 @@ public class RefreshTokenServiceImpl implements ru.mirea.megatracker.interfaces.
     public RefreshToken createRefreshToken(int userId) {
         RefreshToken refreshToken = new RefreshToken();
 
-        refreshToken.setUser(usersRepository.findById(userId).get());
+        Optional<User> maybeUser = usersRepository.findById(userId);
+        if (maybeUser.isEmpty()) throw new UserNotFoundException();
+
+        refreshToken.setUser(maybeUser.get());
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDuration));
         refreshToken.setToken(UUID.randomUUID().toString());
 
-        refreshToken = refreshTokensRepository.save(refreshToken);
-        return refreshToken;
+        return refreshTokensRepository.save(refreshToken);
     }
 
     @Transactional
     @Override
     public RefreshToken verifyExpiration(RefreshToken token) {
-        if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
+        boolean tokenIsExpired = token.getExpiryDate().compareTo(Instant.now()) < 0;
+        if (tokenIsExpired) {
             refreshTokensRepository.delete(token);
-            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new sign in request");
+            throw new TokenExpiredException();
         }
 
         return token;
