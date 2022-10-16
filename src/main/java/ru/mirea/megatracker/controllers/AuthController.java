@@ -22,7 +22,6 @@ import ru.mirea.megatracker.payload.TokenRefreshRequest;
 import ru.mirea.megatracker.payload.TokenRefreshResponse;
 import ru.mirea.megatracker.security.UserDetailsImpl;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
-import ru.mirea.megatracker.services.RefreshTokenService;
 import ru.mirea.megatracker.util.*;
 
 import javax.servlet.http.HttpServletRequest;
