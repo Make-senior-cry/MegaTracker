@@ -9,8 +9,10 @@ import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
 import ru.mirea.megatracker.dto.coin.FavoriteCoinDTO;
 
 import javax.persistence.*;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Optional;
 
 @Entity
 @Table(name = "coins")
@@ -64,48 +66,56 @@ public class Coin {
         transfer = new BigDecimal(deltaPricePercent);
         if (Math.abs(transfer.setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().floatValue()) < 0.0000001) {
             coinInfoDTO.setDeltaPricePercent(0);
-        }
-        else {
+        } else {
             coinInfoDTO.setDeltaPricePercent(transfer.setScale(2, RoundingMode.HALF_UP).floatValue());
         }
     }
 
-    public void convertToDTO(DetailedCoinInfoDTO detailedCoinInfoDTO) {
-        BigDecimal transfer;
+    public DetailedCoinInfoDTO convertToDetailedCoinInfoDTO(Optional<Note> maybeNote) {
+        DetailedCoinInfoDTO dto = new DetailedCoinInfoDTO();
 
-        detailedCoinInfoDTO.setName(name);
-        detailedCoinInfoDTO.setTicker(ticker);
-        detailedCoinInfoDTO.setCurrentPrice(currentPrice);
-        detailedCoinInfoDTO.setNote("");
-        transfer = new BigDecimal(deltaPrice);
-        detailedCoinInfoDTO.setDeltaPrice(transfer.setScale(6, RoundingMode.HALF_UP).floatValue());
+        dto.setName(name);
+        dto.setTicker(ticker);
+        dto.setCurrentPrice(currentPrice);
+        dto.setNote("");
+
+        BigDecimal transfer = new BigDecimal(deltaPrice);
+        dto.setDeltaPrice(transfer.setScale(6, RoundingMode.HALF_UP).floatValue());
         transfer = new BigDecimal(deltaPricePercent);
         if (Math.abs(transfer.setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().floatValue()) < 0.0000001) {
-            detailedCoinInfoDTO.setDeltaPricePercent(0);
+            dto.setDeltaPricePercent(0);
+        } else {
+            dto.setDeltaPricePercent(transfer.setScale(2, RoundingMode.HALF_UP).floatValue());
         }
-        else {
-            detailedCoinInfoDTO.setDeltaPricePercent(transfer.setScale(2, RoundingMode.HALF_UP).floatValue());
+        dto.setMarketCap(marketCap);
+        dto.setHighDayPrice(highDayPrice);
+        dto.setLowDayPrice(lowDayPrice);
+
+        if (maybeNote.isPresent()) {
+            Note note = maybeNote.get();
+            dto.setNote(note.getNote());
+            dto.setFavorite(note.isFavorite());
         }
-        detailedCoinInfoDTO.setMarketCap(marketCap);
-        detailedCoinInfoDTO.setHighDayPrice(highDayPrice);
-        detailedCoinInfoDTO.setLowDayPrice(lowDayPrice);
+
+        return dto;
     }
 
-    public void convertToDTO(FavoriteCoinDTO favoriteCoinDTO) {
-        BigDecimal transfer;
+    public FavoriteCoinDTO convertToFavoriteCoinDTO(boolean isFavorite) {
+        FavoriteCoinDTO dto = new FavoriteCoinDTO();
 
-        favoriteCoinDTO.setName(name);
-        favoriteCoinDTO.setTicker(ticker);
-        favoriteCoinDTO.setIconUrl(iconUrl);
-        favoriteCoinDTO.setCurrentPrice(currentPrice);
-        transfer = new BigDecimal(deltaPrice);
-        favoriteCoinDTO.setDeltaPrice(transfer.setScale(6, RoundingMode.HALF_UP).floatValue());
+        dto.setName(name);
+        dto.setTicker(ticker);
+        dto.setIconUrl(iconUrl);
+        dto.setCurrentPrice(currentPrice);
+        BigDecimal transfer = new BigDecimal(deltaPrice);
+        dto.setDeltaPrice(transfer.setScale(6, RoundingMode.HALF_UP).floatValue());
         transfer = new BigDecimal(deltaPricePercent);
         if (Math.abs(transfer.setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().floatValue()) < 0.0000001) {
-            favoriteCoinDTO.setDeltaPricePercent(0);
+            dto.setDeltaPricePercent(0);
+        } else {
+            dto.setDeltaPricePercent(transfer.setScale(2, RoundingMode.HALF_UP).floatValue());
         }
-        else {
-            favoriteCoinDTO.setDeltaPricePercent(transfer.setScale(2, RoundingMode.HALF_UP).floatValue());
-        }
+        dto.setFavorite(isFavorite);
+        return dto;
     }
 }

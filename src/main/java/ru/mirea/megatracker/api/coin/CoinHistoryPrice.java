@@ -10,9 +10,6 @@ import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @NoArgsConstructor
@@ -30,20 +27,15 @@ public class CoinHistoryPrice {
         this.time = time * 1000L;
     }
 
-
-    private String convertUnixDateToString(long unixDate) {
-        Date realDate = new Date(unixDate * 1000L);
-        SimpleDateFormat res = new SimpleDateFormat("dd/MM/yyyy");
-        return res.format(realDate);
-    }
-
-    public void convertToDto(CoinPriceHistoryDTO dto, float deltaPrice) {
+    public CoinPriceHistoryDTO convertToCoinPriceHistoryDTO(float deltaPrice) {
+        CoinPriceHistoryDTO dto = new CoinPriceHistoryDTO();
         dto.setClosingPrice(closingPrice.floatValue());
         dto.setDateTime(time);
         dto.setDeltaClosingPrice(deltaPrice);
         dto.setDeltaClosingPricePercent(new BigDecimal(deltaPrice/closingPrice.floatValue()*100)
                 .setScale(closingPrice.scale(), RoundingMode.HALF_UP)
                 .floatValue());
+        return dto;
     }
 
     @Override
