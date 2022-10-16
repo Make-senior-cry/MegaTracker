@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+
 import ru.mirea.megatracker.api.coin.CoinHistoryPrice;
 import ru.mirea.megatracker.api.response.HistoryApiResponse;
 import ru.mirea.megatracker.dto.coin.CoinInfoDTO;
@@ -26,19 +27,17 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
-public class CoinService {
+public class CoinAPIServiceImpl implements ru.mirea.megatracker.interfaces.CoinAPIService {
     private final WebClient webClient;
-
-    @Value("${api.key}")
-    private String apiKey;
-
     private final String apiKeyHeader;
     private final UsersRepository usersRepository;
     private final NotesRepository notesRepository;
     private final CoinsRepository coinsRepository;
+    @Value("${api.key}")
+    private String apiKey;
 
     @Autowired
-    public CoinService(WebClient webClient, UsersRepository usersRepository, NotesRepository notesRepository, CoinsRepository coinsRepository) {
+    public CoinAPIServiceImpl(WebClient webClient, UsersRepository usersRepository, NotesRepository notesRepository, CoinsRepository coinsRepository) {
         this.webClient = webClient;
         this.usersRepository = usersRepository;
         this.notesRepository = notesRepository;
@@ -46,9 +45,9 @@ public class CoinService {
         this.apiKeyHeader = "Apikey {" + apiKey + "}";
     }
 
-    public Map<Object, Object> getTopList(int page, int pageSize, float minPrice, float maxPrice
-            , boolean isRising, String search) throws CoinErrorResponse {
-        Map<Object, Object> response = new HashMap<>();
+    @Override
+    public Map<String, Object> getTopList(int page, int pageSize, float minPrice, float maxPrice, boolean isRising, String search) {
+        Map<String, Object> response = new HashMap<>();
         List<Coin> filteredCoins;
         List<Coin> searchedCoins = new ArrayList<>();
         List<Coin> coins;
@@ -81,7 +80,8 @@ public class CoinService {
         return response;
     }
 
-    public DetailedCoinInfoDTO getCoinByTicker(String email, String ticker) throws CoinErrorResponse {
+    @Override
+    public DetailedCoinInfoDTO getCoinByTicker(String email, String ticker) {
         DetailedCoinInfoDTO response = new DetailedCoinInfoDTO();
         Coin coin = coinsRepository.findByTicker(ticker);
         coin.convertToDTO(response);
@@ -96,14 +96,12 @@ public class CoinService {
         return response;
     }
 
-    public List<CoinPriceHistoryDTO> getPriceHistoryByTicker(String ticker) throws CoinErrorResponse {
+    @Override
+    public List<CoinPriceHistoryDTO> getPriceHistoryByTicker(String ticker) {
 
         HistoryApiResponse historyApiResponse = webClient.get()
-                .uri(String.format("/v2/histoday?fsym=%s&tsym=USD&limit=30", ticker))
-                .header(apiKeyHeader)
-                .retrieve()
-                .bodyToMono(HistoryApiResponse.class)
-                .block();
+                .uri(String.format("/v2/histoday?fsym=%s&tsym=USD&limit=30", ticker)).header(apiKeyHeader).retrieve()
+                .bodyToMono(HistoryApiResponse.class).block();
         if (historyApiResponse == null || !historyApiResponse.getMessage().equals("Success")) {
             throw new CoinErrorResponse("Failed to get price history");
         }
@@ -114,18 +112,17 @@ public class CoinService {
             CoinPriceHistoryDTO coinPriceHistoryDTO = new CoinPriceHistoryDTO();
             BigDecimal curr = historyList.get(i).getClosingPrice();
             BigDecimal prev = historyList.get(i - 1).getClosingPrice();
-            float deltaPrice = curr.subtract(prev)
-                    .setScale(Math.max(prev.scale(), curr.scale()), RoundingMode.HALF_UP)
-                    .stripTrailingZeros()
-                    .floatValue();
+            float deltaPrice = curr.subtract(prev).setScale(Math.max(prev.scale(), curr.scale()), RoundingMode.HALF_UP)
+                    .stripTrailingZeros().floatValue();
             historyList.get(i).convertToDto(coinPriceHistoryDTO, deltaPrice);
             response.add(coinPriceHistoryDTO);
         }
         return response;
     }
 
-    public Map<Object, Object> getFavoriteCoins(int page, int pageSize, String email) {
-        Map<Object, Object> request = new HashMap<>();
+    @Override
+    public Map<String, Object> getFavoriteCoins(int page, int pageSize, String email) {
+        Map<String, Object> request = new HashMap<>();
 
         Optional<User> user = usersRepository.findByEmail(email);
         List<Note> notes;
@@ -145,8 +142,9 @@ public class CoinService {
                 FavoriteCoinDTO favoriteCoinDTO = new FavoriteCoinDTO();
                 if (i < favoriteCoins.size()) {
                     favoriteCoins.get(i).convertToDTO(favoriteCoinDTO);
-                    favoriteCoinDTO.setFavorite(notesRepository.findByUserAndTicker(user.get(),
-                            favoriteCoinDTO.getTicker()).get().isFavorite());
+                    favoriteCoinDTO.setFavorite(
+                            notesRepository.findByUserAndTicker(user.get(), favoriteCoinDTO.getTicker()).get()
+                                    .isFavorite());
                     coins.add(favoriteCoinDTO);
                 } else {
                     break;
