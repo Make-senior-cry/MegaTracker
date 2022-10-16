@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
-import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
-import ru.mirea.megatracker.interfaces.CoinAPIService;
+import ru.mirea.megatracker.interfaces.CoinService;
 import ru.mirea.megatracker.interfaces.NoteService;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
 import ru.mirea.megatracker.util.CoinErrorResponse;
@@ -14,7 +12,6 @@ import ru.mirea.megatracker.util.UserErrorResponse;
 import ru.mirea.megatracker.util.UserNotAuthenticatedException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,13 +19,13 @@ import java.util.Map;
 @RequestMapping("/coins")
 public class CoinController {
 
-    private final CoinAPIService coinService;
+    private final CoinService coinService;
     private final NoteService noteService;
     private final JwtUtil jwtUtil;
 
 
     @Autowired
-    public CoinController(CoinAPIService coinService, NoteService noteService, JwtUtil jwtUtil) {
+    public CoinController(CoinService coinService, NoteService noteService, JwtUtil jwtUtil) {
         this.coinService = coinService;
         this.noteService = noteService;
         this.jwtUtil = jwtUtil;
@@ -50,13 +47,13 @@ public class CoinController {
     @GetMapping("/{ticker}")
     public ResponseEntity<?> getCoinByTicker(@PathVariable String ticker, HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7);
-        return new ResponseEntity<DetailedCoinInfoDTO>(coinService.getCoinByTicker(jwtUtil.getUsernameFromJwtToken(token),
+        return new ResponseEntity<>(coinService.getCoinByTicker(jwtUtil.getUsernameFromJwtToken(token),
                 ticker), HttpStatus.OK);
     }
 
     @GetMapping("/{ticker}/history")
     public ResponseEntity<?> getHistoryByTicker(@PathVariable String ticker) {
-        return new ResponseEntity<List<CoinPriceHistoryDTO>>(coinService.getPriceHistoryByTicker(ticker), HttpStatus.OK);
+        return new ResponseEntity<>(coinService.getPriceHistoryByTicker(ticker), HttpStatus.OK);
     }
 
     @PostMapping("/{ticker}/set-note")
