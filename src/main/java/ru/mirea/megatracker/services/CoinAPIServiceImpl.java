@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import ru.mirea.megatracker.api.coin.ApiCoin;
 import ru.mirea.megatracker.api.coin.CoinHistoryPrice;
 import ru.mirea.megatracker.api.response.HistoryApiResponse;
+import ru.mirea.megatracker.api.response.TopListApiResponse;
 import ru.mirea.megatracker.interfaces.CoinAPIService;
 import ru.mirea.megatracker.util.CoinErrorResponse;
 
@@ -37,5 +39,17 @@ public class CoinAPIServiceImpl implements CoinAPIService {
         if (requestFailed) throw new CoinErrorResponse("Failed to get price history");
 
         return historyApiResponse.getData().getCoinHistoryPrice();
+    }
+
+    @Override
+    public List<ApiCoin> fetchApiCoins(int page) {
+        String uri = String.format("top/totalvolfull?limit=%d&tsym=USD&page=%d", 88, page);
+        TopListApiResponse topListApiResponse = webClient.get().uri(uri).header(getAPIHeader())
+                .retrieve().bodyToMono(TopListApiResponse.class).block();
+
+        boolean requestFailed = topListApiResponse == null || !topListApiResponse.getMessage().equals("Success");
+        if (requestFailed) throw new CoinErrorResponse("Coins error");
+
+        return topListApiResponse.getData();
     }
 }
