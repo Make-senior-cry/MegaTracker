@@ -56,9 +56,8 @@ public class CoinServiceImpl implements CoinService {
 
         List<CoinInfoDTO> paginatedCoins = new ArrayList<>(pageSize);
         for (int i = (page - 1) * pageSize; (i < page * pageSize) && (i <= coins.size() - 1); i++) {
-            CoinInfoDTO coinInfoDTO = new CoinInfoDTO();
-            coins.get(i).convertToDTO(coinInfoDTO);
-            paginatedCoins.add(coinInfoDTO);
+            Coin coin = coins.get(i);
+            paginatedCoins.add(coin.convertToCoinInfoDTO());
         }
 
         return createPaginatedCoinsResponse(paginatedCoins, getPageCount(coins, pageSize));

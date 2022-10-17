@@ -54,21 +54,24 @@ public class Coin {
     @Column(name = "market_cap")
     private long marketCap;
 
-    public void convertToDTO(CoinInfoDTO coinInfoDTO) {
+    public CoinInfoDTO convertToCoinInfoDTO() {
+        CoinInfoDTO dto = new CoinInfoDTO();
         BigDecimal transfer;
 
-        coinInfoDTO.setName(name);
-        coinInfoDTO.setTicker(ticker);
-        coinInfoDTO.setIconUrl(iconUrl);
-        coinInfoDTO.setCurrentPrice(currentPrice);
+        dto.setName(name);
+        dto.setTicker(ticker);
+        dto.setIconUrl(iconUrl);
+        dto.setCurrentPrice(currentPrice);
         transfer = new BigDecimal(deltaPrice);
-        coinInfoDTO.setDeltaPrice(transfer.setScale(6, RoundingMode.HALF_UP).floatValue());
+        dto.setDeltaPrice(transfer.setScale(6, RoundingMode.HALF_UP).floatValue());
         transfer = new BigDecimal(deltaPricePercent);
         if (Math.abs(transfer.setScale(6, RoundingMode.HALF_UP).stripTrailingZeros().floatValue()) < 0.0000001) {
-            coinInfoDTO.setDeltaPricePercent(0);
+            dto.setDeltaPricePercent(0);
         } else {
-            coinInfoDTO.setDeltaPricePercent(transfer.setScale(2, RoundingMode.HALF_UP).floatValue());
+            dto.setDeltaPricePercent(transfer.setScale(2, RoundingMode.HALF_UP).floatValue());
         }
+
+        return dto;
     }
 
     public DetailedCoinInfoDTO convertToDetailedCoinInfoDTO(Optional<Note> maybeNote) {
@@ -117,5 +120,15 @@ public class Coin {
         }
         dto.setFavorite(isFavorite);
         return dto;
+    }
+
+    public Coin updateFromModel(Coin sourceModel) {
+        setCurrentPrice(sourceModel.getCurrentPrice());
+        setDeltaPrice(sourceModel.getDeltaPrice());
+        setDeltaPricePercent(sourceModel.getDeltaPricePercent());
+        setHighDayPrice(sourceModel.getHighDayPrice());
+        setLowDayPrice(sourceModel.getLowDayPrice());
+        setMarketCap(sourceModel.getMarketCap());
+        return this;
     }
 }
