@@ -26,18 +26,7 @@ public class CoinInfo {
     @JsonProperty(value = "ImageUrl")
     private String iconUrl;
 
-    public void convertToDTO(CoinInfoDTO coinInfoDTO) {
-        coinInfoDTO.setName(name);
-        coinInfoDTO.setTicker(ticker);
-        coinInfoDTO.setIconUrl("https://www.cryptocompare.com" + iconUrl);
-    }
-
-    public void convertToDTO(DetailedCoinInfoDTO detailedCoinInfoDTO) {
-        detailedCoinInfoDTO.setName(name);
-        detailedCoinInfoDTO.setTicker(ticker);
-    }
-
-    public void convertToModel(Coin coin) {
+    public void updateCoin(Coin coin) {
         coin.setName(name);
         coin.setTicker(ticker);
         coin.setIconUrl("https://www.cryptocompare.com" + iconUrl);
