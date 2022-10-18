@@ -20,6 +20,7 @@ import ru.mirea.megatracker.dto.coin.CoinPriceHistoryDTO;
 import ru.mirea.megatracker.dto.coin.DetailedCoinInfoDTO;
 import ru.mirea.megatracker.dto.coin.FavoriteCoinDTO;
 import ru.mirea.megatracker.exceptions.CoinNotFoundException;
+import ru.mirea.megatracker.exceptions.UserNotAuthenticatedException;
 import ru.mirea.megatracker.exceptions.UserNotFoundException;
 import ru.mirea.megatracker.interfaces.CoinAPIService;
 import ru.mirea.megatracker.interfaces.CoinService;
@@ -29,7 +30,6 @@ import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.repositories.CoinsRepository;
 import ru.mirea.megatracker.repositories.NotesRepository;
 import ru.mirea.megatracker.repositories.UsersRepository;
-import ru.mirea.megatracker.util.UserNotAuthenticatedException;
 
 @Service
 public class CoinServiceImpl implements CoinService {
@@ -99,7 +99,7 @@ public class CoinServiceImpl implements CoinService {
     public Map<String, Object> getFavoriteCoins(int page, int pageSize, String email) {
         Optional<User> user = usersRepository.findByEmail(email);
         // TODO: fix not authenticated exception
-        if (user.isEmpty()) throw new UserNotAuthenticatedException("");
+        if (user.isEmpty()) throw new UserNotAuthenticatedException();
 
         ArrayList<Coin> favoriteCoins = notesRepository.findAllByUserAndIsFavorite(user.get(), true).stream()
                 .map(note -> coinsRepository.findByTicker(note.getTicker()).orElse(null)).filter(Objects::nonNull)

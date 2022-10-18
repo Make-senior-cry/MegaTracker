@@ -5,12 +5,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ru.mirea.megatracker.exceptions.TokenExpiredException;
+import io.jsonwebtoken.ExpiredJwtException;
 import ru.mirea.megatracker.exceptions.UserNotFoundException;
 import ru.mirea.megatracker.models.RefreshToken;
 import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.repositories.RefreshTokensRepository;
 import ru.mirea.megatracker.repositories.UsersRepository;
+import ru.mirea.megatracker.security.jwt.JwtUtil;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -56,7 +57,7 @@ public class RefreshTokenServiceImpl implements ru.mirea.megatracker.interfaces.
         boolean tokenIsExpired = token.getExpiryDate().compareTo(Instant.now()) < 0;
         if (tokenIsExpired) {
             refreshTokensRepository.delete(token);
-            throw new TokenExpiredException();
+            throw new ExpiredJwtException(null, null, "Authentication failed");
         }
 
         return token;

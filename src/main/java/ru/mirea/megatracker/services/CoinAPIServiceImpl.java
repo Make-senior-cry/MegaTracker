@@ -10,7 +10,7 @@ import ru.mirea.megatracker.api.coin.CoinHistoryPrice;
 import ru.mirea.megatracker.api.response.HistoryApiResponse;
 import ru.mirea.megatracker.api.response.TopListApiResponse;
 import ru.mirea.megatracker.interfaces.CoinAPIService;
-import ru.mirea.megatracker.util.CoinErrorResponse;
+import ru.mirea.megatracker.exceptions.CoinFetchFailedException;
 
 import java.util.*;
 
@@ -36,7 +36,7 @@ public class CoinAPIServiceImpl implements CoinAPIService {
                 .bodyToMono(HistoryApiResponse.class).block();
 
         boolean requestFailed = historyApiResponse == null || !historyApiResponse.getMessage().equals("Success");
-        if (requestFailed) throw new CoinErrorResponse("Failed to get price history");
+        if (requestFailed) throw new CoinFetchFailedException("Failed to get price history");
 
         return historyApiResponse.getData().getCoinHistoryPrice();
     }
@@ -48,7 +48,7 @@ public class CoinAPIServiceImpl implements CoinAPIService {
                 .retrieve().bodyToMono(TopListApiResponse.class).block();
 
         boolean requestFailed = topListApiResponse == null || !topListApiResponse.getMessage().equals("Success");
-        if (requestFailed) throw new CoinErrorResponse("Coins error");
+        if (requestFailed) throw new CoinFetchFailedException("Coins error");
 
         return topListApiResponse.getData();
     }
