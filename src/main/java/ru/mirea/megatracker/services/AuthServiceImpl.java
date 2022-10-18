@@ -9,7 +9,7 @@ import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.repositories.RefreshTokensRepository;
 import ru.mirea.megatracker.repositories.UsersRepository;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
-import ru.mirea.megatracker.util.UnconfirmedPasswordException;
+import ru.mirea.megatracker.exceptions.UnconfirmedPasswordException;
 
 import java.util.Optional;
 
@@ -71,7 +71,7 @@ public class AuthServiceImpl implements ru.mirea.megatracker.interfaces.AuthServ
 
         // User cannot update the password
         if (newPassword.equals(newPasswordRepeat) && passwordEncoder.matches(oldPassword, passwordToChange)) {
-            throw new UnconfirmedPasswordException("Password does not match");
+            throw new UnconfirmedPasswordException();
         }
         user.setPassword(newPassword);
         hashUserPasswordAndSave(user);
