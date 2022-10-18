@@ -1,7 +1,6 @@
 package ru.mirea.megatracker.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.mirea.megatracker.dto.user.SignInUserDTO;
 import ru.mirea.megatracker.dto.user.SignUpUserDTO;
+import ru.mirea.megatracker.exceptions.EmailAlreadyExistsException;
+import ru.mirea.megatracker.exceptions.TokenRefreshNotFoundException;
+import ru.mirea.megatracker.exceptions.UnconfirmedPasswordException;
+import ru.mirea.megatracker.exceptions.ValidationFailedException;
 import ru.mirea.megatracker.interfaces.AuthService;
 import ru.mirea.megatracker.interfaces.RefreshTokenService;
 import ru.mirea.megatracker.models.RefreshToken;
@@ -22,7 +25,6 @@ import ru.mirea.megatracker.payload.TokenRefreshRequest;
 import ru.mirea.megatracker.payload.TokenRefreshResponse;
 import ru.mirea.megatracker.security.UserDetailsImpl;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
-import ru.mirea.megatracker.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -51,19 +53,10 @@ public class AuthController {
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUp(@Valid @RequestBody SignUpUserDTO signUpUserDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            StringBuilder errorMessage = new StringBuilder();
-
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            for (FieldError error : errors) {
-                errorMessage.append(error.getDefaultMessage()).append("\n");
-            }
-
-            throw new UserNotCreatedException(errorMessage.toString());
-        }
+        validateAuthForm(bindingResult);
 
         if (authService.checkForEmailExistence(signUpUserDTO.getEmail())) {
-            return ResponseEntity.badRequest().body(new UserErrorResponse("Email is already in use!"));
+            throw new EmailAlreadyExistsException();
         }
 
         confirmPassword(signUpUserDTO.getPassword(), signUpUserDTO.getRepeatedPassword());
@@ -74,18 +67,22 @@ public class AuthController {
         return ResponseEntity.ok("User registered successfully!");
     }
 
+    private void validateAuthForm(BindingResult bindingResult) {
+        if (!bindingResult.hasErrors()) return;
+        StringBuilder errorMessage = new StringBuilder();
+
+        List<FieldError> errors = bindingResult.getFieldErrors();
+        for (FieldError error : errors) {
+            errorMessage.append(error.getDefaultMessage()).append("\n");
+        }
+
+        throw new ValidationFailedException(errorMessage.toString());
+
+    }
+
     @PostMapping("/sign-in")
     public ResponseEntity<?> signIn(@RequestBody @Valid SignInUserDTO signInUserDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            StringBuilder errorMessage = new StringBuilder();
-
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            for (FieldError error : errors) {
-                errorMessage.append(error.getDefaultMessage()).append("\n");
-            }
-
-            throw new UserNotAuthenticatedException(errorMessage.toString());
-        }
+        validateAuthForm(bindingResult);
 
         authService.checkRefreshToken(signInUserDTO.getEmail());
 
@@ -109,8 +106,7 @@ public class AuthController {
                 .map(RefreshToken::getUser).map(user -> {
                     String accessToken = jwtUtil.generateTokenFromUsername(user.getEmail());
                     return ResponseEntity.ok(new TokenRefreshResponse(accessToken, requestRefreshToken));
-                })
-                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
+                }).orElseThrow(TokenRefreshNotFoundException::new);
     }
 
     @PostMapping("/logout")
@@ -130,35 +126,7 @@ public class AuthController {
 
     private void confirmPassword(String password, String repeatedPassword) {
         if (!password.equals(repeatedPassword)) {
-            throw new UnconfirmedPasswordException("Password does not match!");
+            throw new UnconfirmedPasswordException();
         }
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<UserErrorResponse> handleException(UserNotCreatedException exception) {
-        UserErrorResponse response = new UserErrorResponse(exception.getMessage());
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<UserErrorResponse> handleException(UnconfirmedPasswordException exception) {
-        UserErrorResponse response = new UserErrorResponse(exception.getMessage());
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<UserErrorResponse> handleException(UserNotAuthenticatedException exception) {
-        UserErrorResponse response = new UserErrorResponse(exception.getMessage());
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<UserErrorResponse> handleException(TokenRefreshException exception) {
-        UserErrorResponse response = new UserErrorResponse(exception.getMessage());
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 }
