@@ -22,8 +22,6 @@ import ru.mirea.megatracker.dto.coin.FavoriteCoinDTO;
 import ru.mirea.megatracker.exceptions.CoinNotFoundException;
 import ru.mirea.megatracker.exceptions.UserNotAuthenticatedException;
 import ru.mirea.megatracker.exceptions.UserNotFoundException;
-import ru.mirea.megatracker.interfaces.CoinAPIService;
-import ru.mirea.megatracker.interfaces.CoinService;
 import ru.mirea.megatracker.models.Coin;
 import ru.mirea.megatracker.models.Note;
 import ru.mirea.megatracker.models.User;
@@ -32,21 +30,20 @@ import ru.mirea.megatracker.repositories.NotesRepository;
 import ru.mirea.megatracker.repositories.UsersRepository;
 
 @Service
-public class CoinServiceImpl implements CoinService {
+public class CoinService {
     private final UsersRepository usersRepository;
     private final NotesRepository notesRepository;
     private final CoinsRepository coinsRepository;
     private final CoinAPIService coinAPIService;
 
     @Autowired
-    public CoinServiceImpl(UsersRepository usersRepository, NotesRepository notesRepository, CoinsRepository coinsRepository, CoinAPIService coinAPIService) {
+    public CoinService(UsersRepository usersRepository, NotesRepository notesRepository, CoinsRepository coinsRepository, CoinAPIService coinAPIService) {
         this.usersRepository = usersRepository;
         this.notesRepository = notesRepository;
         this.coinsRepository = coinsRepository;
         this.coinAPIService = coinAPIService;
     }
 
-    @Override
     public Map<String, Object> getTopList(int page, int pageSize, float minPrice, float maxPrice, boolean isRising, String search) {
         float minDeltaPrice = isRising ? (float) 0.001 : -Float.MAX_VALUE;
         List<Coin> coins = coinsRepository.findAllWithFilters(minPrice, maxPrice, minDeltaPrice);
@@ -63,7 +60,6 @@ public class CoinServiceImpl implements CoinService {
         return createPaginatedCoinsResponse(paginatedCoins, getPageCount(coins, pageSize));
     }
 
-    @Override
     public DetailedCoinInfoDTO getCoinByTicker(String email, String ticker) {
         Optional<Coin> maybeCoin = coinsRepository.findByTicker(ticker);
         if (maybeCoin.isEmpty()) throw new CoinNotFoundException(ticker);
@@ -76,7 +72,6 @@ public class CoinServiceImpl implements CoinService {
         return maybeCoin.get().convertToDetailedCoinInfoDTO(maybeNote);
     }
 
-    @Override
     public List<CoinPriceHistoryDTO> getPriceHistoryByTicker(String ticker) {
         List<CoinHistoryPrice> historyList = coinAPIService.fetchHistoryPrice(ticker);
 
@@ -95,7 +90,6 @@ public class CoinServiceImpl implements CoinService {
         return priceHistory;
     }
 
-    @Override
     public Map<String, Object> getFavoriteCoins(int page, int pageSize, String email) {
         Optional<User> user = usersRepository.findByEmail(email);
         // TODO: fix not authenticated exception

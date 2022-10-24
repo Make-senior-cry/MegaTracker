@@ -11,9 +11,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import ru.mirea.megatracker.api.coin.CoinInfo;
 import ru.mirea.megatracker.api.coin.CoinPriceData;
-import ru.mirea.megatracker.interfaces.CoinAPIService;
 import ru.mirea.megatracker.models.Coin;
 import ru.mirea.megatracker.repositories.CoinsRepository;
+import ru.mirea.megatracker.services.CoinAPIService;
 
 @Component
 public class FetchCoinsTask {

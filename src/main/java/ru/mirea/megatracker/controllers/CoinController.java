@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ru.mirea.megatracker.interfaces.CoinService;
-import ru.mirea.megatracker.interfaces.NoteService;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
+import ru.mirea.megatracker.services.CoinService;
+import ru.mirea.megatracker.services.NoteService;
 
 import javax.servlet.http.HttpServletRequest;
 
