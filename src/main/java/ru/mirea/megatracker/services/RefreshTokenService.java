@@ -11,7 +11,6 @@ import ru.mirea.megatracker.models.RefreshToken;
 import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.repositories.RefreshTokensRepository;
 import ru.mirea.megatracker.repositories.UsersRepository;
-import ru.mirea.megatracker.security.jwt.JwtUtil;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -19,25 +18,23 @@ import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
-public class RefreshTokenServiceImpl implements ru.mirea.megatracker.interfaces.RefreshTokenService {
+public class RefreshTokenService {
     private final RefreshTokensRepository refreshTokensRepository;
     private final UsersRepository usersRepository;
     @Value("${jwtRefresh.token.expired}")
     private Long refreshTokenDuration;
 
     @Autowired
-    public RefreshTokenServiceImpl(RefreshTokensRepository refreshTokensRepository, UsersRepository usersRepository) {
+    public RefreshTokenService(RefreshTokensRepository refreshTokensRepository, UsersRepository usersRepository) {
         this.refreshTokensRepository = refreshTokensRepository;
         this.usersRepository = usersRepository;
     }
 
-    @Override
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokensRepository.findByToken(token);
     }
 
     @Transactional
-    @Override
     public RefreshToken createRefreshToken(int userId) {
         RefreshToken refreshToken = new RefreshToken();
 
@@ -52,7 +49,6 @@ public class RefreshTokenServiceImpl implements ru.mirea.megatracker.interfaces.
     }
 
     @Transactional
-    @Override
     public RefreshToken verifyExpiration(RefreshToken token) {
         boolean tokenIsExpired = token.getExpiryDate().compareTo(Instant.now()) < 0;
         if (tokenIsExpired) {

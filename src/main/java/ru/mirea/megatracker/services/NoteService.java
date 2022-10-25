@@ -14,18 +14,17 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
-public class NoteServiceImpl implements ru.mirea.megatracker.interfaces.NoteService {
+public class NoteService {
     private final NotesRepository notesRepository;
     private final UsersRepository usersRepository;
 
     @Autowired
-    public NoteServiceImpl(NotesRepository notesRepository, UsersRepository usersRepository) {
+    public NoteService(NotesRepository notesRepository, UsersRepository usersRepository) {
         this.notesRepository = notesRepository;
         this.usersRepository = usersRepository;
     }
 
     @Transactional
-    @Override
     public void setNoteForCoin(String email, String ticker, String noteText) {
         Optional<User> maybeUser = usersRepository.findByEmail(email);
         if (maybeUser.isEmpty()) throw new UserNotFoundException();
@@ -49,7 +48,6 @@ public class NoteServiceImpl implements ru.mirea.megatracker.interfaces.NoteServ
     }
 
     @Transactional
-    @Override
     public void setFavoriteForCoin(String email, String ticker, boolean isFavorite) {
         Optional<User> maybeUser = usersRepository.findByEmail(email);
         if (maybeUser.isEmpty()) throw new UserNotFoundException();

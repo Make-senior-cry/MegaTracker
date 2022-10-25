@@ -16,14 +16,14 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
-public class AuthServiceImpl implements ru.mirea.megatracker.interfaces.AuthService {
+public class AuthService {
     private final UsersRepository usersRepository;
     private final RefreshTokensRepository refreshTokensRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
     @Autowired
-    public AuthServiceImpl(UsersRepository usersRepository, RefreshTokensRepository refreshTokensRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public AuthService(UsersRepository usersRepository, RefreshTokensRepository refreshTokensRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.usersRepository = usersRepository;
         this.refreshTokensRepository = refreshTokensRepository;
         this.passwordEncoder = passwordEncoder;
@@ -31,18 +31,15 @@ public class AuthServiceImpl implements ru.mirea.megatracker.interfaces.AuthServ
     }
 
     @Transactional
-    @Override
     public void register(User user) {
         hashUserPasswordAndSave(user);
     }
 
-    @Override
     public boolean checkForEmailExistence(String email) {
         return usersRepository.existsByEmail(email);
     }
 
     @Transactional
-    @Override
     public void checkRefreshToken(String email) {
         Optional<User> maybeUser = usersRepository.findByEmail(email);
         if (maybeUser.isEmpty()) return;
@@ -54,13 +51,11 @@ public class AuthServiceImpl implements ru.mirea.megatracker.interfaces.AuthServ
     }
 
     @Transactional
-    @Override
     public void logOut(String refreshToken) {
         refreshTokensRepository.deleteByToken(refreshToken);
     }
 
     @Transactional
-    @Override
     public void updatePassword(String oldPassword, String newPassword, String newPasswordRepeat, String token) {
         String userEmail = jwtUtil.getUsernameFromJwtToken(token);
         Optional<User> maybeUser = usersRepository.findByEmail(userEmail);

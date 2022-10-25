@@ -16,8 +16,6 @@ import ru.mirea.megatracker.exceptions.EmailAlreadyExistsException;
 import ru.mirea.megatracker.exceptions.TokenRefreshNotFoundException;
 import ru.mirea.megatracker.exceptions.UnconfirmedPasswordException;
 import ru.mirea.megatracker.exceptions.ValidationFailedException;
-import ru.mirea.megatracker.interfaces.AuthService;
-import ru.mirea.megatracker.interfaces.RefreshTokenService;
 import ru.mirea.megatracker.models.RefreshToken;
 import ru.mirea.megatracker.models.User;
 import ru.mirea.megatracker.payload.JwtResponse;
@@ -25,6 +23,8 @@ import ru.mirea.megatracker.payload.TokenRefreshRequest;
 import ru.mirea.megatracker.payload.TokenRefreshResponse;
 import ru.mirea.megatracker.security.UserDetailsImpl;
 import ru.mirea.megatracker.security.jwt.JwtUtil;
+import ru.mirea.megatracker.services.AuthService;
+import ru.mirea.megatracker.services.RefreshTokenService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
