@@ -35,10 +35,20 @@ Megatracker - это приложение, которое позволяет п�
 1. Клонирование репозитория
 ```bash
 git clone https://github.com/Make-senior-cry/MegaTracker.git
-cd MegaTracker
 ```
 
-2. Запуск Docker Compose
-```bash
-docker-compose up
-```
+2. Вставить в корень проекта файл .env со следующими переменными:  
+API_KEY=*Ваше значение*  
+JWT_ACCESS_TOKEN_EXPIRED=*Ваше значение*  
+JWT_REFRESH_TOKEN_EXPIRED=*Ваше значение*  
+JWT_TOKEN_SECRET=*Ваше значение*  
+SPRING_DATASOURCE_DATABASE=*Ваше значение*  
+SPRING_DATASOURCE_PASSWORD=*Ваше значение*  
+SPRING_DATASOURCE_USERNAME=*Ваше значение*  
+API_URL=https://min-api.cryptocompare.com/data/  
+POSTGRES_LOCAL_PORT=*Ваше значение*  
+POSTGRES_DOCKER_PORT=*Ваше значение*  
+SPRING_LOCAL_PORT=*Ваше значение*  
+SPRING_DOCKER_PORT=*Ваше значение*  
+
+3. Запустить проект локально
