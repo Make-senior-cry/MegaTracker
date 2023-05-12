@@ -35,6 +35,7 @@ Megatracker - это приложение, которое позволяет п�
 1. Клонирование репозитория
 ```bash
 git clone https://github.com/Make-senior-cry/MegaTracker.git
+cd MegaTracker
 ```
 
 2. Вставить в корень проекта файл .env со следующими переменными:  
@@ -52,3 +53,9 @@ SPRING_LOCAL_PORT=*Ваше значение*
 SPRING_DOCKER_PORT=*Ваше значение*  
 
 3. Запустить проект локально
+```bash
+mvn spring-boot:run
+```
+
+## Showcase
+![2023-05-12 16-27-25](https://github.com/Make-senior-cry/MegaTracker/assets/91724146/af7cfab6-27f5-4fc4-a04b-aeac8b237723)
